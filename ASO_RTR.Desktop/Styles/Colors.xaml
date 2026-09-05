@@ -1,0 +1,174 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Paleta ASO RTR.
+
+         Toda la familia sale de UN tono base (HSL ~200°, azul-verde/teal): un acento neutro,
+         provisional hasta que exista una marca real (ver CLAUDE.md). La estructura de la
+         paleta -que tono llevan los sitios con relleno solido, cuales son los tintes de los
+         chips, que tan oscuro es cada escalon de neutro- es la misma que traia ASO; solo cambia
+         el matiz.
+
+         Los blancos son Benjamin Moore Decorator's White CC-20 (#EBEDEA, LRV 82,68) en vez de
+         blanco puro. Como CC-20 es mas oscuro que #FFFFFF, TODA la escalera de neutros baja con
+         el: la tarjeta tiene que seguir despegando del fondo de pagina, y eso solo se conserva
+         si Surface sigue siendo el escalon mas claro (Surface > FilaAlterna > Background >
+         Sidebar > Border). -->
+    <Color x:Key="BackgroundColor">#D4DADE</Color>
+    <Color x:Key="SurfaceColor">#E9EDED</Color>
+    <Color x:Key="SidebarColor">#CBD2D6</Color>
+    <Color x:Key="SidebarBorderColor">#B7C0C5</Color>
+    <Color x:Key="PrimaryColor">#14425D</Color>
+    <Color x:Key="PrimaryLightColor">#195F76</Color>
+    <!-- La clave conserva el nombre historico (AccentBlue) porque la citan quince sitios y
+         renombrarla seria tocarlos todos por cosmetica; ahora coincide de verdad con el tono. -->
+    <Color x:Key="AccentBlueColor">#195F76</Color>
+    <Color x:Key="TextPrimaryColor">#1F2426</Color>
+    <Color x:Key="TextSecondaryColor">#5A5E61</Color>
+    <!-- #585E55 (el original) da 5,67:1 sobre CC-20 y 4,89:1 sobre el fondo, AA en los dos; el
+         mismo par L/S rotado de tono conserva esos contrastes. -->
+    <Color x:Key="TextMutedColor">#585B5E</Color>
+    <Color x:Key="BorderColor">#C9D0D4</Color>
+    <!-- Un escalon mas de borde, para separar lo que el borde fino no separa: la cabecera de una
+         tabla de sus filas, y el borde de una tarjeta senalada del de la de al lado. -->
+    <Color x:Key="BorderStrongColor">#B0B9BF</Color>
+    <Color x:Key="SuccessColor">#16A34A</Color>
+    <Color x:Key="WarningColor">#F59E0B</Color>
+    <Color x:Key="DangerColor">#DC2626</Color>
+    <Color x:Key="InfoColor">#1E523F</Color>
+
+    <!-- Navegación lateral. El elegido y el hover se distinguen por el LADO al que se van, no por
+         el tono: el elegido aclara sobre el sidebar (L 0,80 contra 0,66) y el hover oscurece
+         (0,60). Eso los separa aunque los dos sean neutros, y deja el pulsado un escalón por
+         debajo del hover, en la misma dirección.
+
+         El relleno del elegido va callado a propósito. La fila ya se marca DOS veces —barra de
+         3 px en NavIndicator y etiqueta en el acento y negrita—, así que un relleno saturado
+         encima era decir lo mismo tres veces. Con este relleno quien marca es la barra, y el
+         color se queda en la barra y en el texto. -->
+    <Color x:Key="NavHoverColor">#C1C9CD</Color>
+    <Color x:Key="NavSelectedColor">#DAE3E3</Color>
+    <Color x:Key="NavPressedColor">#B0B9C0</Color>
+    <Color x:Key="NavIndicatorColor">#195F76</Color>
+    <Color x:Key="NavTextSecondaryColor">#42484B</Color>
+
+    <!-- Estados que antes vivian como hex sueltos dentro de Theme.xaml. Estan aqui para que
+         el cambio de tema los alcance: Services/Tema.cs recorre los brushes de la paleta, y
+         un color escrito a mano en un Setter se quedaria claro sobre fondo oscuro. -->
+    <Color x:Key="CardHoverColor">#E3EDF3</Color>
+    <Color x:Key="DangerHoverColor">#B91C1C</Color>
+    <Color x:Key="DangerPressedColor">#991B1B</Color>
+    <Color x:Key="ToggleHoverColor">#DAE1E5</Color>
+    <Color x:Key="FilaAlternaColor">#E2E6E7</Color>
+    <Color x:Key="HoverOverlayColor">#14000000</Color>
+    <Color x:Key="PressedOverlayColor">#26000000</Color>
+    <Color x:Key="VolverFondoColor">#DCEEF6</Color>
+
+    <!-- Pares suave/texto para los estados.
+
+         Los chips llevan fondo tenido y texto fuerte del mismo tono, que es el patron correcto
+         en una interfaz densa (pesa menos que fondo saturado + texto blanco, y no falla
+         contraste). Cada par se usa junto: …SoftBrush de fondo, …TextBrush de letra y de borde. -->
+    <Color x:Key="SuccessSoftColor">#D9EBD8</Color>
+    <Color x:Key="SuccessTextColor">#15803D</Color>
+    <Color x:Key="WarningSoftColor">#F0E7C4</Color>
+    <Color x:Key="WarningTextColor">#B45309</Color>
+    <Color x:Key="DangerSoftColor">#F3DFDB</Color>
+    <Color x:Key="DangerTextColor">#B91C1C</Color>
+    <Color x:Key="InfoSoftColor">#CFEDF7</Color>
+    <Color x:Key="InfoTextColor">#14425D</Color>
+    <Color x:Key="NeutralSoftColor">#E0E3E6</Color>
+    <Color x:Key="NeutralTextColor">#474D51</Color>
+
+
+    <!-- Contorno de los chips: el MISMO tono del texto pero al 35 %.
+
+         A pleno, el borde de un chip de 10 px pesa tanto como su letra, y una tabla con una
+         pastilla por fila se convertia en una reja de contornos de colores compitiendo con los
+         datos. Al 35 % el contorno sigue cerrando la forma y deja de gritar. El alfa va en el
+         color (#59…) porque se compone sobre el fondo tenido del propio chip. -->
+    <Color x:Key="SuccessBordeColor">#5915803D</Color>
+    <Color x:Key="WarningBordeColor">#59B45309</Color>
+    <Color x:Key="DangerBordeColor">#59B91C1C</Color>
+    <Color x:Key="InfoBordeColor">#5914425D</Color>
+    <Color x:Key="NeutralBordeColor">#59474D51</Color>
+
+    <!-- Fondo de los botones solidos. Existe aparte de PrimaryBrush porque el texto que va
+         encima es blanco y tiene que aguantar AA en las dos paletas: PrimaryBrush se aclara en
+         la oscura y el blanco sobre el desapareceria. Este token la sustituye solo bajo el
+         texto, y en las dos paletas se queda oscuro. -->
+    <Color x:Key="PrimaryButtonColor">#14425D</Color>
+    <Color x:Key="DangerButtonColor">#DC2626</Color>
+
+    <!-- Lo que se pinta ENCIMA de un relleno de acento: el glifo del punto de la linea de tiempo,
+         el ToggleButton marcado, el dia elegido del calendario. El color del texto es una
+         decision de la paleta y no del estilo: blanco aqui, casi negro en la oscura, porque el
+         acento de la paleta oscura es claro. -->
+    <Color x:Key="OnAccentColor">#FFFFFF</Color>
+
+    <!-- Anillo de foco. No existia: ningun campo de captura mostraba donde estaba el teclado. -->
+    <Color x:Key="FocusRingColor">#195F76</Color>
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="{StaticResource SidebarColor}" />
+    <SolidColorBrush x:Key="SidebarBorderBrush" Color="{StaticResource SidebarBorderColor}" />
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}" />
+    <SolidColorBrush x:Key="AccentBlueBrush" Color="{StaticResource AccentBlueColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="BorderStrongBrush" Color="{StaticResource BorderStrongColor}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
+    <SolidColorBrush x:Key="NavHoverBrush" Color="{StaticResource NavHoverColor}" />
+    <SolidColorBrush x:Key="NavSelectedBrush" Color="{StaticResource NavSelectedColor}" />
+    <SolidColorBrush x:Key="NavPressedBrush" Color="{StaticResource NavPressedColor}" />
+    <SolidColorBrush x:Key="NavIndicatorBrush" Color="{StaticResource NavIndicatorColor}" />
+    <SolidColorBrush x:Key="NavTextSecondaryBrush" Color="{StaticResource NavTextSecondaryColor}" />
+    <SolidColorBrush x:Key="CardHoverBrush" Color="{StaticResource CardHoverColor}" />
+    <SolidColorBrush x:Key="DangerHoverBrush" Color="{StaticResource DangerHoverColor}" />
+    <SolidColorBrush x:Key="DangerPressedBrush" Color="{StaticResource DangerPressedColor}" />
+    <SolidColorBrush x:Key="ToggleHoverBrush" Color="{StaticResource ToggleHoverColor}" />
+    <SolidColorBrush x:Key="FilaAlternaBrush" Color="{StaticResource FilaAlternaColor}" />
+    <SolidColorBrush x:Key="HoverOverlayBrush" Color="{StaticResource HoverOverlayColor}" />
+    <SolidColorBrush x:Key="PressedOverlayBrush" Color="{StaticResource PressedOverlayColor}" />
+    <SolidColorBrush x:Key="VolverFondoBrush" Color="{StaticResource VolverFondoColor}" />
+    <SolidColorBrush x:Key="SuccessSoftBrush" Color="{StaticResource SuccessSoftColor}" />
+    <SolidColorBrush x:Key="SuccessTextBrush" Color="{StaticResource SuccessTextColor}" />
+    <SolidColorBrush x:Key="WarningSoftBrush" Color="{StaticResource WarningSoftColor}" />
+    <SolidColorBrush x:Key="WarningTextBrush" Color="{StaticResource WarningTextColor}" />
+    <SolidColorBrush x:Key="DangerSoftBrush" Color="{StaticResource DangerSoftColor}" />
+    <SolidColorBrush x:Key="DangerTextBrush" Color="{StaticResource DangerTextColor}" />
+    <SolidColorBrush x:Key="InfoSoftBrush" Color="{StaticResource InfoSoftColor}" />
+    <SolidColorBrush x:Key="InfoTextBrush" Color="{StaticResource InfoTextColor}" />
+    <SolidColorBrush x:Key="NeutralSoftBrush" Color="{StaticResource NeutralSoftColor}" />
+    <SolidColorBrush x:Key="NeutralTextBrush" Color="{StaticResource NeutralTextColor}" />
+    <SolidColorBrush x:Key="SuccessBordeBrush" Color="{StaticResource SuccessBordeColor}" />
+    <SolidColorBrush x:Key="WarningBordeBrush" Color="{StaticResource WarningBordeColor}" />
+    <SolidColorBrush x:Key="DangerBordeBrush" Color="{StaticResource DangerBordeColor}" />
+    <SolidColorBrush x:Key="InfoBordeBrush" Color="{StaticResource InfoBordeColor}" />
+    <SolidColorBrush x:Key="NeutralBordeBrush" Color="{StaticResource NeutralBordeColor}" />
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="{StaticResource PrimaryButtonColor}" />
+    <SolidColorBrush x:Key="DangerButtonBrush" Color="{StaticResource DangerButtonColor}" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="{StaticResource OnAccentColor}" />
+    <SolidColorBrush x:Key="FocusRingBrush" Color="{StaticResource FocusRingColor}" />
+
+
+    <!-- ============================== Elevacion ==============================
+
+         La sombra de lo que FLOTA sobre la pagina: desplegable, calendario, menu. Una tarjeta de
+         datos no la lleva — se separa con su borde, que en una interfaz densa separa mejor.
+
+         Va como efecto COMPLETO y con clave, no como un color que la plantilla monte por su
+         cuenta: DropShadowEffect es Freezable y se congela al cargarse el diccionario, asi que un
+         DynamicResource sobre su Color no se puede resolver desde dentro de una ControlTemplate.
+         Pidiendo el objeto entero, cada tema trae el suyo ya montado. -->
+    <DropShadowEffect x:Key="SombraFlotante" Color="#000000" Opacity="0.25"
+                      BlurRadius="16" ShadowDepth="4" Direction="270" />
+
+</ResourceDictionary>
