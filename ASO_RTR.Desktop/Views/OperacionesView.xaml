@@ -1,0 +1,182 @@
+<UserControl x:Class="ASO_RTR.Desktop.Views.OperacionesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:ASO_RTR.Desktop.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="640" d:DesignWidth="1100">
+
+  <Grid Style="{StaticResource PantallaPlenaStyle}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <controls:PageHeader Grid.Row="0"
+                         Titulo="{Binding Submodulo.Nombre}"
+                         Descripcion="{Binding Submodulo.Descripcion}" />
+
+    <!-- Conmutador: los procesos y sus etapas. -->
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+      <RadioButton Content="Procesos" GroupName="VistaOperaciones"
+                   Style="{StaticResource SegmentedTabStyle}"
+                   IsChecked="{Binding EsProcesos, Mode=TwoWay}" />
+      <RadioButton Content="Etapas" GroupName="VistaOperaciones"
+                   Style="{StaticResource SegmentedTabStyle}"
+                   IsChecked="{Binding EsEtapas, Mode=TwoWay}" />
+    </StackPanel>
+
+    <Border Grid.Row="1" Style="{StaticResource TabStripStyle}" VerticalAlignment="Bottom" />
+
+    <!-- Procesos -->
+    <Grid Grid.Row="2" Margin="0,16,0,0"
+          Visibility="{Binding MostrarProcesos, Converter={StaticResource BoolToVis}}">
+      <Grid DataContext="{Binding Procesos}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Style="{StaticResource ToolbarStyle}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <WrapPanel Grid.Row="0" VerticalAlignment="Center">
+            <controls:SearchBox Width="280" Margin="0,0,12,0" VerticalAlignment="Center"
+                                Texto="{Binding TextoBusqueda, Mode=TwoWay}" />
+          </WrapPanel>
+
+          <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,0">
+            <Button Content="Nuevo proceso" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding AgregarCommand}" />
+            <Button Content="Editar" Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding EditarCommand}" />
+            <Button Content="Eliminar" Style="{StaticResource SecondaryButtonStyle}"
+                    Foreground="{DynamicResource DangerTextBrush}"
+                    Command="{Binding EliminarCommand}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="1" Style="{StaticResource SectionCardStyle}" Padding="0">
+        <Grid>
+          <DataGrid x:Name="TablaProcesos" Style="{StaticResource DataGridStyle}"
+                    ItemsSource="{Binding ItemsView}"
+                    SelectedItem="{Binding SelectedItem}">
+            <DataGrid.Columns>
+              <controls:ColumnaTexto Header="Nº" Binding="{Binding Id}" Width="44" />
+              <controls:ColumnaTexto Header="Tipo de botella" Binding="{Binding TipoBotellaEtiqueta}" Width="30*" MinWidth="160" />
+              <controls:ColumnaTexto Header="Fecha" Width="14*" MinWidth="78"
+                                     Binding="{Binding FechaCreacion, StringFormat={}{0:dd/MM/yyyy}}" />
+              <controls:ColumnaTexto Header="Notas" Binding="{Binding Notas}" Width="30*" MinWidth="120" />
+            </DataGrid.Columns>
+          </DataGrid>
+
+          <controls:EmptyState Icono="{x:Static controls:Iconos.CuentasPorPagar}"
+                               Titulo="No hay procesos"
+                               Detalle="Registra el primer proceso para empezar a llevarle el control."
+                               Visibility="{Binding HasItems, ElementName=TablaProcesos, Converter={StaticResource SinItemsAVis}}" />
+        </Grid>
+      </Border>
+      </Grid>
+    </Grid>
+
+    <!-- Etapas -->
+    <Grid Grid.Row="2" Margin="0,16,0,0"
+          Visibility="{Binding MostrarEtapas, Converter={StaticResource BoolToVis}}">
+      <Grid DataContext="{Binding Etapas}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0" Style="{StaticResource ToolbarStyle}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <WrapPanel Grid.Row="0" VerticalAlignment="Center">
+            <controls:SearchBox Width="280" Margin="0,0,12,0" VerticalAlignment="Center"
+                                Texto="{Binding TextoBusqueda, Mode=TwoWay}" />
+
+            <controls:FiltroDropdown Style="{StaticResource FiltroDropdownStyle}" SelectedIndex="0"
+                                     Margin="0,0,12,0" VerticalAlignment="Center"
+                                     Command="{Binding CambiarFiltroEstadoCommand}">
+              <ComboBoxItem Content="Todas" />
+              <ComboBoxItem Content="Pendientes" />
+              <ComboBoxItem Content="En proceso" />
+              <ComboBoxItem Content="Completadas" />
+              <ComboBoxItem Content="Rechazadas" />
+            </controls:FiltroDropdown>
+          </WrapPanel>
+
+          <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,0">
+            <Button Content="Agregar etapa" Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding AgregarCommand}" />
+            <Button Content="Editar" Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding EditarCommand}" />
+            <Button Content="Iniciar" Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding IniciarCommand}" />
+            <Button Content="Completar" Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding CompletarCommand}" />
+            <Button Content="Rechazar" Style="{StaticResource SecondaryButtonStyle}"
+                    Foreground="{DynamicResource DangerTextBrush}"
+                    Command="{Binding RechazarCommand}" />
+            <Button Content="Reintentar" Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding ReintentarCommand}" />
+            <Button Content="Eliminar" Style="{StaticResource SecondaryButtonStyle}"
+                    Foreground="{DynamicResource DangerTextBrush}"
+                    Command="{Binding EliminarCommand}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="1" Style="{StaticResource SectionCardStyle}" Padding="0">
+        <Grid>
+          <DataGrid x:Name="TablaEtapas" Style="{StaticResource DataGridStyle}"
+                    ItemsSource="{Binding ItemsView}"
+                    SelectedItem="{Binding SelectedItem}">
+            <DataGrid.RowStyle>
+              <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                <Setter Property="ToolTip" Value="{Binding MotivoRechazo}" />
+                <Setter Property="ToolTipService.InitialShowDelay" Value="300" />
+              </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+              <controls:ColumnaTexto Header="Proceso" Binding="{Binding ProcesoEtiqueta}" Width="22*" MinWidth="140" />
+              <controls:ColumnaTexto Header="Etapa" Binding="{Binding TipoTexto}" Width="16*" MinWidth="110" />
+              <controls:ColumnaTexto Header="Empleados" Binding="{Binding EmpleadosTexto}" Width="24*" MinWidth="140" />
+              <controls:ColumnaTexto Header="Inicio" Width="11*" MinWidth="78"
+                                     Binding="{Binding FechaInicio, StringFormat={}{0:dd/MM/yyyy}}" />
+              <controls:ColumnaTexto Header="Fin" Width="11*" MinWidth="78"
+                                     Binding="{Binding FechaFin, StringFormat={}{0:dd/MM/yyyy}}" />
+              <controls:ColumnaNumero Header="Procesadas" Binding="{Binding CantidadProcesada}" Width="10*" MinWidth="80" />
+              <DataGridTemplateColumn Header="Estado" Width="100">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Border Style="{StaticResource ChipEstadoEtapaStyle}">
+                      <TextBlock Text="{Binding EstadoTexto}" FontSize="{StaticResource FsCaption}" />
+                    </Border>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+
+          <controls:EmptyState Icono="{x:Static controls:Iconos.Calendario}"
+                               Titulo="No hay etapas"
+                               Detalle="Agrega la primera etapa de un proceso para empezar a seguirle la pista."
+                               Visibility="{Binding HasItems, ElementName=TablaEtapas, Converter={StaticResource SinItemsAVis}}" />
+        </Grid>
+      </Border>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

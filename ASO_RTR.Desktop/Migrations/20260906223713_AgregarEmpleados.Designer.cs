@@ -4,6 +4,7 @@ using ASO_RTR.Desktop.BD;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASO_RTR.Desktop.Migrations
 {
     [DbContext(typeof(AsoRtrDbContext))]
-    partial class AsoRtrDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260906223713_AgregarEmpleados")]
+    partial class AgregarEmpleados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,60 +118,6 @@ namespace ASO_RTR.Desktop.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Empleados");
-                });
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.Etapa", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CantidadProcesada")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CreadoPorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaFin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaInicio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MotivoRechazo")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Notas")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProcesoEtiqueta")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("ProcesoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Tipo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Etapas");
                 });
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.FacturaProveedor", b =>
@@ -454,38 +403,6 @@ namespace ASO_RTR.Desktop.Migrations
                     b.ToTable("PeticionesCambio");
                 });
 
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.Proceso", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notas")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TipoBotellaEtiqueta")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("TipoBotellaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Procesos");
-                });
-
             modelBuilder.Entity("ASO_RTR.Desktop.Models.Proveedor", b =>
                 {
                     b.Property<int>("Id")
@@ -523,52 +440,6 @@ namespace ASO_RTR.Desktop.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Proveedores");
-                });
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.TipoBotella", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("BotellasPorCaja")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Marca")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Medida")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("Niveles")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Presentacion")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnidadesPorNivel")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TiposBotella");
                 });
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.Usuario", b =>
@@ -614,40 +485,6 @@ namespace ASO_RTR.Desktop.Migrations
                         .IsUnique();
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.Etapa", b =>
-                {
-                    b.OwnsMany("ASO_RTR.Desktop.Models.EtapaEmpleado", "Empleados", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<int>("EmpleadoId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("EmpleadoNombre")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)");
-
-                            b1.Property<int>("EtapaId")
-                                .HasColumnType("int");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("EtapaId");
-
-                            b1.ToTable("EtapaEmpleado");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EtapaId");
-                        });
-
-                    b.Navigation("Empleados");
                 });
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.FacturaProveedor", b =>

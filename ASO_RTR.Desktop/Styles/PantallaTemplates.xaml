@@ -19,6 +19,24 @@
     <views:CuentasPorPagarView />
   </DataTemplate>
 
+  <!-- Nómina · Empleados -->
+
+  <DataTemplate DataType="{x:Type vm:EmpleadosViewModel}">
+    <views:EmpleadosView />
+  </DataTemplate>
+
+  <!-- Operaciones · Procesos y Etapas -->
+
+  <DataTemplate DataType="{x:Type vm:OperacionesViewModel}">
+    <views:OperacionesView />
+  </DataTemplate>
+
+  <!-- Catálogo · Tipos de Botella -->
+
+  <DataTemplate DataType="{x:Type vm:TiposBotellaViewModel}">
+    <views:TiposBotellaView />
+  </DataTemplate>
+
   <!-- Armazón -->
 
   <DataTemplate DataType="{x:Type vm:AdministracionViewModel}">

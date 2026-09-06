@@ -69,6 +69,33 @@ public static class ModuloCatalogo
                     "Obligaciones con proveedores y su vencimiento.", Iconos.CuentasPorPagar),
                 new Submodulo("Finanzas.Banco", "Banco",
                     "Estado de la cuenta según lo cobrado y pagado en la aplicación.", Iconos.Banco)
+            ]),
+        new Modulo(
+            "Nomina",
+            "Nómina",
+            "Personal de la planta.",
+            Iconos.Usuarios,
+            [
+                new Submodulo("Nomina.Empleados", "Empleados",
+                    "Registro del personal de la planta.", Iconos.Usuarios)
+            ]),
+        new Modulo(
+            "Operaciones",
+            "Operaciones",
+            "Procesos de control de calidad, limpieza, empacado y etiquetado.",
+            Iconos.CuentasPorPagar,
+            [
+                new Submodulo("Operaciones.Procesos", "Procesos",
+                    "Procesos en planta y sus etapas.", Iconos.CuentasPorPagar)
+            ]),
+        new Modulo(
+            "Catalogo",
+            "Catálogo",
+            "Información maestra de los productos: tipos de botella, presentación y paletizado.",
+            Iconos.Proveedor,
+            [
+                new Submodulo("Catalogo.TiposBotella", "Tipos de Botella",
+                    "Botellas que maneja la empresa, su empaque y su paleta.", Iconos.Proveedor)
             ])
     ];
 

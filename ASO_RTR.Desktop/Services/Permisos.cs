@@ -75,6 +75,47 @@ public static class Permisos
         public const string Resolver = "Peticiones.Resolver";
     }
 
+    public static class Empleados
+    {
+        public const string Crear = "Empleados.Crear";
+        public const string Editar = "Empleados.Editar";
+        public const string Eliminar = "Empleados.Eliminar";
+    }
+
+    public static class Procesos
+    {
+        public const string Crear = "Procesos.Crear";
+        public const string Editar = "Procesos.Editar";
+        public const string Eliminar = "Procesos.Eliminar";
+    }
+
+    public static class Etapas
+    {
+        public const string Crear = "Etapas.Crear";
+        public const string Editar = "Etapas.Editar";
+        public const string Eliminar = "Etapas.Eliminar";
+    }
+
+    public static class TiposBotella
+    {
+        public const string Crear = "TiposBotella.Crear";
+        public const string Editar = "TiposBotella.Editar";
+        public const string Eliminar = "TiposBotella.Eliminar";
+    }
+
+    /// <summary>
+    /// Transiciones de una etapa. Van aparte de <see cref="Etapas"/> por el mismo motivo que
+    /// <see cref="Finanzas"/> va aparte de <see cref="FacturasProveedor"/>: avanzar el estado de
+    /// un documento es una acción distinta de darlo de alta o corregirlo.
+    /// </summary>
+    public static class Operaciones
+    {
+        public const string Iniciar = "Operaciones.Iniciar";
+        public const string Completar = "Operaciones.Completar";
+        public const string Rechazar = "Operaciones.Rechazar";
+        public const string Reintentar = "Operaciones.Reintentar";
+    }
+
     /// <summary>
     /// Los datos de la propia organización (nombre y código interno). No hay padrón ni alta:
     /// la organización nace en el primer arranque y aquí solo se corrigen sus datos.

@@ -158,6 +158,9 @@ public partial class MainWindow : Window
         {
             ["Finanzas.CuentasPorPagar"] = (m, s) => new CuentasPorPagarViewModel(m, s),
             ["Finanzas.Banco"] = (m, s) => new BancoViewModel(m, s),
+            ["Nomina.Empleados"] = (m, s) => new EmpleadosViewModel(m, s),
+            ["Operaciones.Procesos"] = (m, s) => new OperacionesViewModel(m, s),
+            ["Catalogo.TiposBotella"] = (m, s) => new TiposBotellaViewModel(m, s),
         };
 
     private object CrearVistaModulo(Modulo modulo)

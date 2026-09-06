@@ -38,6 +38,32 @@
     <views:TransferenciaEditorView />
   </DataTemplate>
 
+  <!-- Nómina · Empleados -->
+
+  <DataTemplate DataType="{x:Type vm:EmpleadoEditorViewModel}">
+    <views:EmpleadoEditorView />
+  </DataTemplate>
+
+  <!-- Operaciones · Procesos y Etapas -->
+
+  <DataTemplate DataType="{x:Type vm:ProcesoEditorViewModel}">
+    <views:ProcesoEditorView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:EtapaEditorViewModel}">
+    <views:EtapaEditorView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:CantidadEditorViewModel}">
+    <views:CantidadEditorView />
+  </DataTemplate>
+
+  <!-- Catálogo · Tipos de Botella -->
+
+  <DataTemplate DataType="{x:Type vm:TipoBotellaEditorViewModel}">
+    <views:TipoBotellaEditorView />
+  </DataTemplate>
+
   <!-- Armazón -->
 
   <DataTemplate DataType="{x:Type vm:UsuarioEditorViewModel}">
