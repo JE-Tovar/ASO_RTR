@@ -23,15 +23,22 @@
        velo del hover, el anillo de foco y el atenuado al deshabilitarse. Aqui solo va la
        intencion: que pinta cada uno y cuanto pesa. -->
 
-  <!-- La accion principal de la pantalla. Una por pantalla; si hay dos, una de las dos no lo es. -->
+  <!-- La accion principal de la pantalla. Una por pantalla; si hay dos, una de las dos no lo es.
+
+       Foreground y borde van a OnAccentBrush/AccentBlueBrush, no a White/sin-borde como antes:
+       el relleno de marca (ámbar) es CLARO, así que un texto blanco encima daría 1,86:1 (antes,
+       con el teal oscuro, White sí bastaba). El borde existe porque el relleno solo, sin él, da
+       1,58:1 de silueta contra la superficie clara — por debajo del 3:1 que pide un elemento de
+       interfaz; con el borde sube a 4,07:1. Ver Colors.xaml para el detalle de contraste. -->
   <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
     <Setter Property="FontSize" Value="{StaticResource FsBody}" />
     <Setter Property="FontWeight" Value="{StaticResource FwMedium}" />
     <Setter Property="Padding" Value="{StaticResource TkBotonPrimario}" />
     <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="BorderThickness" Value="1" />
     <Setter Property="Background" Value="{DynamicResource PrimaryButtonBrush}" />
-    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentBlueBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
   </Style>
 
   <!-- Todo lo demas de la barra de herramientas: Editar, Eliminar, Actualizar. -->
@@ -844,12 +851,14 @@
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
           </StackPanel>
           <ControlTemplate.Triggers>
+            <!-- La perilla usa OnAccentBrush y no White literal: el riel marcado es el ámbar de
+                 marca (claro en las dos paletas), y una perilla blanca encima se perdería. -->
             <Trigger Property="IsChecked" Value="True">
               <Setter TargetName="Riel" Property="Background" Value="{DynamicResource PrimaryButtonBrush}" />
               <Setter TargetName="Riel" Property="BorderBrush" Value="{DynamicResource PrimaryButtonBrush}" />
               <Setter TargetName="Perilla" Property="HorizontalAlignment" Value="Right" />
               <Setter TargetName="Perilla" Property="Margin" Value="0,0,2,0" />
-              <Setter TargetName="Perilla" Property="Background" Value="White" />
+              <Setter TargetName="Perilla" Property="Background" Value="{DynamicResource OnAccentBrush}" />
             </Trigger>
             <Trigger Property="IsKeyboardFocused" Value="True">
               <Setter TargetName="Riel" Property="BorderBrush" Value="{DynamicResource FocusRingBrush}" />
@@ -883,10 +892,13 @@
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
           </Border>
           <ControlTemplate.Triggers>
+            <!-- Marcado, el relleno es PrimaryButtonBrush (el ámbar de marca), no PrimaryBrush:
+                 este lleva OnAccentBrush encima, y PrimaryBrush es solo texto en la paleta clara
+                 (ver Colors.xaml). -->
             <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PrimaryButtonBrush}" />
               <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
-              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryButtonBrush}" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ToggleHoverBrush}" />

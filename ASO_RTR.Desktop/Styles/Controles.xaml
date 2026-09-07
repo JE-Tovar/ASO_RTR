@@ -917,9 +917,12 @@
                                     Value="{DynamicResource AccentBlueBrush}" />
                             <Setter TargetName="Bd" Property="BorderThickness" Value="1" />
                         </Trigger>
+                        <!-- PrimaryButtonBrush y no AccentBlueBrush: el número lleva OnAccentBrush
+                             encima, y en la paleta clara AccentBlueBrush (el escalón intermedio de
+                             borde/foco) solo da 3,44:1 como relleno de texto — por debajo de AA. -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Background"
-                                    Value="{DynamicResource AccentBlueBrush}" />
+                                    Value="{DynamicResource PrimaryButtonBrush}" />
                             <Setter TargetName="Numero" Property="Foreground"
                                     Value="{DynamicResource OnAccentBrush}" />
                         </Trigger>

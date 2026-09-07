@@ -255,6 +255,13 @@ cajas blancas). Las cuatro reglas de siempre siguen aplicando al escribir XAML n
 3. No se anima un brush: se anima la opacidad de un velo o borde superpuesto.
 4. Sombra solo en lo que flota (`Effect="{DynamicResource SombraFlotante}"`), nunca en una
    tarjeta de datos.
+5. **Todo relleno de acento usa `PrimaryButtonBrush` con `OnAccentBrush` encima; `PrimaryBrush`
+   es solo color de texto/icono, nunca fondo.** Regla nueva desde que la marca es ámbar (claro):
+   con el teal anterior (oscuro) daba igual cuál de los dos se usara de fondo, porque los dos
+   aguantaban texto blanco encima. Con un acento claro ya no da igual — un botón pintado con
+   `PrimaryBrush` en la paleta clara saldría en `#7A4E00` con el texto que le pongas encima sin
+   ninguna garantía de contraste, en vez del `#FFAD3E` que se espera ver. Ver el comentario de
+   cabecera de `Colors.xaml` para el detalle de contraste de cada escalón de la familia.
 
 ## Configuración y preferencias
 
@@ -270,10 +277,10 @@ quitó). Las preferencias NO van a la base de datos: viven en `%AppData%\ASO RTR
 Este scaffold arrancó sin negocio real todavía cargado. Lo siguiente son placeholders
 deliberados, fáciles de revisar y cambiar; no son bugs:
 
-1. **Color de marca**: `Colors.xaml`/`ColorsOscuro.xaml` usan un azul-teal neutro de relleno
-   (mismo criterio de paleta que ASO — un solo tono base, WCAG cuidado en los pares
-   fondo/texto). Cambiar solo requiere editar los valores de esos dos archivos; la estructura de
-   claves no cambia.
+1. ~~**Color de marca**~~ — resuelto (2026-09-07): ámbar `#FFAD3E` de principal, azul `#3E90FF`
+   de complemento, en `Colors.xaml`/`ColorsOscuro.xaml`. A diferencia del teal provisional que
+   sustituye, el ámbar es **claro**, así que no basta con cambiar valores hex: la regla de
+   acento cambió. Ver "El sistema visual" más abajo.
 2. **Roles genéricos**: `Operador` / `Supervisor` / `AdministradorOrganizacion` / `Desarrollador`
    no están atados a los puestos reales de la planta (inspector de calidad, operario de lavado,
    empacador, etiquetador, supervisor de turno…). Ajustar los nombres y los conjuntos base en

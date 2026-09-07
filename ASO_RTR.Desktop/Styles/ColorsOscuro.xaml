@@ -7,7 +7,7 @@
          de Application.Resources.MergedDictionaries, que es lo ultimo que se consulta al buscar
          una clave, asi que gana sobre la clara. Quitarla devuelve el tema claro.
 
-         Por eso NO mergea Colors.xaml y define las claves completas —43 brushes y el efecto de
+         Por eso NO mergea Colors.xaml y define las claves completas —48 brushes y el efecto de
          sombra—: una que faltara se resolveria contra la paleta clara y saldria un recuadro
          claro sobre fondo oscuro. Al agregar una clave a Colors.xaml hay que agregarla TAMBIEN
          aqui, siempre.
@@ -16,18 +16,20 @@
          una paleta clara en una oscura decente. Los acentos (exito, aviso, peligro) se aclaran
          un escalon, porque el mismo tono que resalta sobre blanco se apaga sobre un fondo oscuro.
 
-         Comparte tono con la paleta clara —el acento azul-teal provisional, ver Colors.xaml—
-         para que la aplicacion tenga una sola identidad y no dos segun el tema. Las superficies
-         son un carbon azul-gris, conservando la MISMA escalera de luminancia que Software ASO
-         tenia con su verde; los acentos siguen el criterio de arriba y se aclaran. -->
+         Marca (2026-09-07): ámbar #FFAD3E / azul #3E90FF, igual que en Colors.xaml — ver ahí el
+         razonamiento completo de contraste. La diferencia con la paleta clara: aquí el ámbar de
+         marca SÍ sirve como texto y como relleno a la vez (10,05:1 sobre el fondo #0F1315), así
+         que PrimaryBrush lleva el #FFAD3E literal en vez del oscurecido #7A4E00 de la paleta
+         clara. Las superficies son el mismo carbón azul-gris de siempre, sin tocar: solo se
+         retiñen de teal a ámbar tenue los neutros de navegación, a la misma luminancia. -->
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="#0F1315" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="#1B2123" />
     <SolidColorBrush x:Key="SidebarBrush" Color="#111417" />
     <SolidColorBrush x:Key="SidebarBorderBrush" Color="#263036" />
-    <SolidColorBrush x:Key="PrimaryBrush" Color="#6FC3DE" />
-    <SolidColorBrush x:Key="PrimaryLightBrush" Color="#9AE4EF" />
-    <SolidColorBrush x:Key="AccentBlueBrush" Color="#9AE4EF" />
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#FFAD3E" />
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="#FFC978" />
+    <SolidColorBrush x:Key="AccentBlueBrush" Color="#FFC978" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E0E6E7" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#96A0A3" />
     <!-- Relevo desazulado del gris de ayuda: 7,63:1 sobre el fondo (#0F1315) y 6,75:1 sobre la
@@ -38,22 +40,22 @@
          oscurecer, que es como se separa una superficie sobre fondo oscuro. -->
     <SolidColorBrush x:Key="BorderStrongBrush" Color="#425058" />
     <SolidColorBrush x:Key="SuccessBrush" Color="#22C55E" />
-    <SolidColorBrush x:Key="WarningBrush" Color="#FBBF24" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FB923C" />
     <SolidColorBrush x:Key="DangerBrush" Color="#EF4444" />
-    <SolidColorBrush x:Key="InfoBrush" Color="#6FC3DE" />
+    <SolidColorBrush x:Key="InfoBrush" Color="#3E90FF" />
 
     <!-- Navegacion lateral: el hover sigue siendo neutro y el seleccionado con el acento, para
          que no se confundan entre si, igual que en la paleta clara. -->
-    <SolidColorBrush x:Key="NavHoverBrush" Color="#181F23" />
-    <SolidColorBrush x:Key="NavSelectedBrush" Color="#1A3037" />
-    <SolidColorBrush x:Key="NavPressedBrush" Color="#224046" />
-    <SolidColorBrush x:Key="NavIndicatorBrush" Color="#9AE4EF" />
+    <SolidColorBrush x:Key="NavHoverBrush" Color="#231F18" />
+    <SolidColorBrush x:Key="NavSelectedBrush" Color="#372B1A" />
+    <SolidColorBrush x:Key="NavPressedBrush" Color="#463822" />
+    <SolidColorBrush x:Key="NavIndicatorBrush" Color="#FFAD3E" />
     <SolidColorBrush x:Key="NavTextSecondaryBrush" Color="#C7D0D3" />
 
-    <SolidColorBrush x:Key="CardHoverBrush" Color="#20292D" />
+    <SolidColorBrush x:Key="CardHoverBrush" Color="#2D2820" />
     <SolidColorBrush x:Key="DangerHoverBrush" Color="#F87171" />
     <SolidColorBrush x:Key="DangerPressedBrush" Color="#FCA5A5" />
-    <SolidColorBrush x:Key="ToggleHoverBrush" Color="#212A2D" />
+    <SolidColorBrush x:Key="ToggleHoverBrush" Color="#2D2821" />
     <SolidColorBrush x:Key="FilaAlternaBrush" Color="#161C1E" />
 
     <!-- Sobre fondo oscuro el velo del hover aclara, en vez de oscurecer como en el tema claro. -->
@@ -61,19 +63,19 @@
     <SolidColorBrush x:Key="PressedOverlayBrush" Color="#33FFFFFF" />
 
     <!-- Fondo suave del boton "Volver al modulo": tiene que dejar leer el acento. -->
-    <SolidColorBrush x:Key="VolverFondoBrush" Color="#142A2E" />
+    <SolidColorBrush x:Key="VolverFondoBrush" Color="#2E2414" />
 
     <!-- Pares suave/texto de los estados. Aqui el "suave" es un tinte oscuro del tono, no un
          pastel: sobre fondo oscuro un pastel claro seria una mancha mas brillante que el propio
          dato. El texto va claro y saturado, y es el que lleva el contraste. -->
     <SolidColorBrush x:Key="SuccessSoftBrush" Color="#14321F" />
     <SolidColorBrush x:Key="SuccessTextBrush" Color="#4ADE80" />
-    <SolidColorBrush x:Key="WarningSoftBrush" Color="#3A2A10" />
-    <SolidColorBrush x:Key="WarningTextBrush" Color="#FCD34D" />
+    <SolidColorBrush x:Key="WarningSoftBrush" Color="#3B1E0E" />
+    <SolidColorBrush x:Key="WarningTextBrush" Color="#FDBA74" />
     <SolidColorBrush x:Key="DangerSoftBrush" Color="#3B1A1A" />
     <SolidColorBrush x:Key="DangerTextBrush" Color="#FCA5A5" />
-    <SolidColorBrush x:Key="InfoSoftBrush" Color="#122A32" />
-    <SolidColorBrush x:Key="InfoTextBrush" Color="#9AE4EF" />
+    <SolidColorBrush x:Key="InfoSoftBrush" Color="#122438" />
+    <SolidColorBrush x:Key="InfoTextBrush" Color="#8FBEFF" />
     <SolidColorBrush x:Key="NeutralSoftBrush" Color="#1B2123" />
     <SolidColorBrush x:Key="NeutralTextBrush" Color="#C7D0D3" />
 
@@ -85,23 +87,23 @@
          datos. Al 35 % el contorno sigue cerrando la forma y deja de gritar. El alfa va en el
          color (#59…) porque se compone sobre el fondo tenido del propio chip. -->
     <SolidColorBrush x:Key="SuccessBordeBrush" Color="#594ADE80" />
-    <SolidColorBrush x:Key="WarningBordeBrush" Color="#59FCD34D" />
+    <SolidColorBrush x:Key="WarningBordeBrush" Color="#59FDBA74" />
     <SolidColorBrush x:Key="DangerBordeBrush" Color="#59FCA5A5" />
-    <SolidColorBrush x:Key="InfoBordeBrush" Color="#599AE4EF" />
+    <SolidColorBrush x:Key="InfoBordeBrush" Color="#598FBEFF" />
     <SolidColorBrush x:Key="NeutralBordeBrush" Color="#59C7D0D3" />
 
-    <!-- Mas oscuros que PrimaryBrush/DangerBrush: el texto blanco de encima aguanta AA, donde
-         con los tonos claros de la paleta general desapareceria. -->
-    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#25697E" />
+    <!-- Igual al ámbar de marca: aquí no hace falta oscurecerlo aparte de PrimaryBrush, porque
+         el texto que va encima (OnAccentBrush, casi negro) ya aguanta AA sobre el ámbar tal
+         cual. DangerButtonBrush sigue oscurecido: su texto blanco sí lo necesita. -->
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#FFAD3E" />
     <SolidColorBrush x:Key="DangerButtonBrush" Color="#B91C1C" />
 
-    <!-- Lo que se pinta ENCIMA de un relleno de acento (ver Colors.xaml). Aqui es casi negro y no
-         blanco, porque en esta paleta los acentos son los tonos CLAROS: el glifo del punto de la
-         linea de tiempo sobre #6FC3DE necesita texto oscuro encima, igual que antes con el verde
-         claro. -->
-    <SolidColorBrush x:Key="OnAccentBrush" Color="#0F1315" />
+    <!-- Lo que se pinta ENCIMA de un relleno de acento (ver Colors.xaml). Mismo valor que en la
+         paleta clara: el ámbar de marca es igual de claro en las dos, así que el texto que va
+         encima no necesita invertirse entre temas como pasaba con el teal. -->
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#2B1C00" />
 
-    <SolidColorBrush x:Key="FocusRingBrush" Color="#9AE4EF" />
+    <SolidColorBrush x:Key="FocusRingBrush" Color="#FFAD3E" />
 
 
     <!-- Mas opaca que en claro (60 % contra 25 %): sobre un fondo ya oscuro una sombra tenue no

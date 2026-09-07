@@ -3,26 +3,55 @@
 
     <!-- Paleta ASO RTR.
 
-         Toda la familia sale de UN tono base (HSL ~200°, azul-verde/teal): un acento neutro,
-         provisional hasta que exista una marca real (ver CLAUDE.md). La estructura de la
-         paleta -que tono llevan los sitios con relleno solido, cuales son los tintes de los
-         chips, que tan oscuro es cada escalon de neutro- es la misma que traia ASO; solo cambia
-         el matiz.
+         Marca (2026-09-07): ámbar #FFAD3E de principal, azul #3E90FF de complemento. Reemplaza
+         al azul-teal provisional que marcaba el PROVISIONAL nº 1 de CLAUDE.md.
+
+         El ámbar es CLARO (luminancia 0,51), al revés que el teal que sustituye (0,04): por eso
+         no hay un solo "PrimaryColor" que sirva de relleno y de texto a la vez, como sí podía el
+         teal. La familia de marca se reparte en tres escalones:
+           - PrimaryButtonColor: el ámbar #FFAD3E literal — SOLO como relleno (botón, monograma,
+             riel de toggle marcado, día de calendario elegido), nunca como texto.
+           - PrimaryColor: #7A4E00, un ámbar oscurecido — SOLO como texto/icono de acento sobre
+             una superficie neutra. Sobre el propio relleno #FFAD3E da 1,58:1: no sirve ahí.
+           - AccentBlueColor/NavIndicatorColor/FocusRingColor: #A66200, un escalón intermedio —
+             bordes, foco, subrayado de pestaña: necesitan más contraste que el relleno pero no
+             tienen debajo el fondo suave de un chip.
+         Regla para XAML nuevo: todo relleno de acento usa PrimaryButtonBrush con
+         OnAccentBrush encima; PrimaryBrush es solo color de texto, nunca fondo.
+
+         El complemento azul (#3E90FF) cubre el rol "información": chips de documento
+         registrado/pendiente y realces informativos (InfoColor y familia). Como borde sobre la
+         superficie clara el azul literal da 2,68:1 (no llega a 3:1), así que InfoBordeColor usa
+         un azul más oscurado (#1A6FDB, 4,10:1) — el mismo criterio que ya aplicaba el 35 % de
+         alfa a los bordes de chip: aquí además hace falta oscurecer el tono de base.
+
+         WarningColor se desplazó de #F59E0B a #EA6A08 (tono ~18° en vez de ~36°): frente al
+         ámbar de marca daba 1,16:1, el mismo color a ojo — un chip "Bajo mínimo" se habría
+         confundido con un botón de marca.
+
+         Los neutros de navegación (NavHover/NavSelected/NavPressed/CardHover/ToggleHover/
+         VolverFondo) llevan ahora un tinte ámbar muy tenue en vez del tinte teal de antes, a la
+         MISMA luminancia (diferencia < 0,02 en cada uno): el escalonado que los separaba entre
+         sí (elegido aclara sobre el sidebar, hover y pulsado oscurecen) no cambia, solo el matiz.
 
          Los blancos son Benjamin Moore Decorator's White CC-20 (#EBEDEA, LRV 82,68) en vez de
          blanco puro. Como CC-20 es mas oscuro que #FFFFFF, TODA la escalera de neutros baja con
          el: la tarjeta tiene que seguir despegando del fondo de pagina, y eso solo se conserva
          si Surface sigue siendo el escalon mas claro (Surface > FilaAlterna > Background >
-         Sidebar > Border). -->
+         Sidebar > Border). Esta escalera de neutros NO se toca al cambiar de marca. -->
     <Color x:Key="BackgroundColor">#D4DADE</Color>
     <Color x:Key="SurfaceColor">#E9EDED</Color>
     <Color x:Key="SidebarColor">#CBD2D6</Color>
     <Color x:Key="SidebarBorderColor">#B7C0C5</Color>
-    <Color x:Key="PrimaryColor">#14425D</Color>
-    <Color x:Key="PrimaryLightColor">#195F76</Color>
+    <!-- Texto/icono de acento sobre superficie neutra. NUNCA como fondo: ver PrimaryButtonColor
+         para el relleno. -->
+    <Color x:Key="PrimaryColor">#7A4E00</Color>
+    <!-- Hover del relleno de marca: el mismo ámbar, un escalón más oscuro. -->
+    <Color x:Key="PrimaryLightColor">#F09A22</Color>
     <!-- La clave conserva el nombre historico (AccentBlue) porque la citan quince sitios y
-         renombrarla seria tocarlos todos por cosmetica; ahora coincide de verdad con el tono. -->
-    <Color x:Key="AccentBlueColor">#195F76</Color>
+         renombrarla seria tocarlos todos por cosmetica. Hoy es el escalón intermedio de la
+         familia de marca (borde de campo enfocado, selección de texto), no un azul. -->
+    <Color x:Key="AccentBlueColor">#A66200</Color>
     <Color x:Key="TextPrimaryColor">#1F2426</Color>
     <Color x:Key="TextSecondaryColor">#5A5E61</Color>
     <!-- #585E55 (el original) da 5,67:1 sobre CC-20 y 4,89:1 sobre el fondo, AA en los dos; el
@@ -33,9 +62,12 @@
          tabla de sus filas, y el borde de una tarjeta senalada del de la de al lado. -->
     <Color x:Key="BorderStrongColor">#B0B9BF</Color>
     <Color x:Key="SuccessColor">#16A34A</Color>
-    <Color x:Key="WarningColor">#F59E0B</Color>
+    <!-- Desplazado de #F59E0B: frente al ámbar de marca (#FFAD3E) daba 1,16:1, el mismo
+         color a ojo. -->
+    <Color x:Key="WarningColor">#EA6A08</Color>
     <Color x:Key="DangerColor">#DC2626</Color>
-    <Color x:Key="InfoColor">#1E523F</Color>
+    <!-- Complemento de marca: azul #3E90FF literal. -->
+    <Color x:Key="InfoColor">#3E90FF</Color>
 
     <!-- Navegación lateral. El elegido y el hover se distinguen por el LADO al que se van, no por
          el tono: el elegido aclara sobre el sidebar (L 0,80 contra 0,66) y el hover oscurece
@@ -46,23 +78,23 @@
          3 px en NavIndicator y etiqueta en el acento y negrita—, así que un relleno saturado
          encima era decir lo mismo tres veces. Con este relleno quien marca es la barra, y el
          color se queda en la barra y en el texto. -->
-    <Color x:Key="NavHoverColor">#C1C9CD</Color>
-    <Color x:Key="NavSelectedColor">#DAE3E3</Color>
-    <Color x:Key="NavPressedColor">#B0B9C0</Color>
-    <Color x:Key="NavIndicatorColor">#195F76</Color>
+    <Color x:Key="NavHoverColor">#CDC8C1</Color>
+    <Color x:Key="NavSelectedColor">#E3DFDA</Color>
+    <Color x:Key="NavPressedColor">#C0BAB0</Color>
+    <Color x:Key="NavIndicatorColor">#A66200</Color>
     <Color x:Key="NavTextSecondaryColor">#42484B</Color>
 
     <!-- Estados que antes vivian como hex sueltos dentro de Theme.xaml. Estan aqui para que
          el cambio de tema los alcance: Services/Tema.cs recorre los brushes de la paleta, y
          un color escrito a mano en un Setter se quedaria claro sobre fondo oscuro. -->
-    <Color x:Key="CardHoverColor">#E3EDF3</Color>
+    <Color x:Key="CardHoverColor">#F3EDE3</Color>
     <Color x:Key="DangerHoverColor">#B91C1C</Color>
     <Color x:Key="DangerPressedColor">#991B1B</Color>
-    <Color x:Key="ToggleHoverColor">#DAE1E5</Color>
+    <Color x:Key="ToggleHoverColor">#E5E1DA</Color>
     <Color x:Key="FilaAlternaColor">#E2E6E7</Color>
     <Color x:Key="HoverOverlayColor">#14000000</Color>
     <Color x:Key="PressedOverlayColor">#26000000</Color>
-    <Color x:Key="VolverFondoColor">#DCEEF6</Color>
+    <Color x:Key="VolverFondoColor">#F6ECDC</Color>
 
     <!-- Pares suave/texto para los estados.
 
@@ -71,43 +103,47 @@
          contraste). Cada par se usa junto: …SoftBrush de fondo, …TextBrush de letra y de borde. -->
     <Color x:Key="SuccessSoftColor">#D9EBD8</Color>
     <Color x:Key="SuccessTextColor">#15803D</Color>
-    <Color x:Key="WarningSoftColor">#F0E7C4</Color>
-    <Color x:Key="WarningTextColor">#B45309</Color>
+    <Color x:Key="WarningSoftColor">#FCE7DA</Color>
+    <Color x:Key="WarningTextColor">#9A3412</Color>
     <Color x:Key="DangerSoftColor">#F3DFDB</Color>
     <Color x:Key="DangerTextColor">#B91C1C</Color>
-    <Color x:Key="InfoSoftColor">#CFEDF7</Color>
-    <Color x:Key="InfoTextColor">#14425D</Color>
+    <Color x:Key="InfoSoftColor">#DCEAFB</Color>
+    <Color x:Key="InfoTextColor">#12539E</Color>
     <Color x:Key="NeutralSoftColor">#E0E3E6</Color>
     <Color x:Key="NeutralTextColor">#474D51</Color>
 
 
-    <!-- Contorno de los chips: el MISMO tono del texto pero al 35 %.
+    <!-- Contorno de los chips: el MISMO tono del texto pero al 35 % — salvo InfoBordeColor,
+         ver más abajo.
 
          A pleno, el borde de un chip de 10 px pesa tanto como su letra, y una tabla con una
          pastilla por fila se convertia en una reja de contornos de colores compitiendo con los
          datos. Al 35 % el contorno sigue cerrando la forma y deja de gritar. El alfa va en el
          color (#59…) porque se compone sobre el fondo tenido del propio chip. -->
     <Color x:Key="SuccessBordeColor">#5915803D</Color>
-    <Color x:Key="WarningBordeColor">#59B45309</Color>
+    <Color x:Key="WarningBordeColor">#599A3412</Color>
     <Color x:Key="DangerBordeColor">#59B91C1C</Color>
-    <Color x:Key="InfoBordeColor">#5914425D</Color>
+    <!-- No es el 35 % de InfoTextColor: el azul de marca (#3E90FF) literal como borde da
+         2,68:1 sobre la superficie clara, por debajo del 3:1 que exige un elemento no
+         textual. #1A6FDB (un azul más oscuro) sube eso a 4,10:1. -->
+    <Color x:Key="InfoBordeColor">#591A6FDB</Color>
     <Color x:Key="NeutralBordeColor">#59474D51</Color>
 
-    <!-- Fondo de los botones solidos. Existe aparte de PrimaryBrush porque el texto que va
-         encima es blanco y tiene que aguantar AA en las dos paletas: PrimaryBrush se aclara en
-         la oscura y el blanco sobre el desapareceria. Este token la sustituye solo bajo el
-         texto, y en las dos paletas se queda oscuro. -->
-    <Color x:Key="PrimaryButtonColor">#14425D</Color>
+    <!-- El relleno de marca: el ámbar #FFAD3E literal, igual en las dos paletas. Separado de
+         PrimaryColor porque éste es solo texto (ver la nota de cabecera) — un botón pintado
+         con PrimaryColor saldría en #7A4E00, no en el ámbar que se pidió. -->
+    <Color x:Key="PrimaryButtonColor">#FFAD3E</Color>
     <Color x:Key="DangerButtonColor">#DC2626</Color>
 
-    <!-- Lo que se pinta ENCIMA de un relleno de acento: el glifo del punto de la linea de tiempo,
-         el ToggleButton marcado, el dia elegido del calendario. El color del texto es una
-         decision de la paleta y no del estilo: blanco aqui, casi negro en la oscura, porque el
-         acento de la paleta oscura es claro. -->
-    <Color x:Key="OnAccentColor">#FFFFFF</Color>
+    <!-- Lo que se pinta ENCIMA de un relleno de acento: el rótulo del botón primario, el glifo
+         del monograma del sidebar, el ToggleButton marcado, el día elegido del calendario.
+         El color del texto es una decisión de la paleta y no del estilo. Aquí es casi negro
+         en LAS DOS paletas: el relleno de marca (#FFAD3E) es igual de claro en las dos, así
+         que no hay que invertirlo entre claro y oscuro como pasaba con el teal. -->
+    <Color x:Key="OnAccentColor">#2B1C00</Color>
 
     <!-- Anillo de foco. No existia: ningun campo de captura mostraba donde estaba el teclado. -->
-    <Color x:Key="FocusRingColor">#195F76</Color>
+    <Color x:Key="FocusRingColor">#A66200</Color>
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
