@@ -158,6 +158,7 @@ public partial class MainWindow : Window
         {
             ["Finanzas.CuentasPorPagar"] = (m, s) => new CuentasPorPagarViewModel(m, s),
             ["Finanzas.Banco"] = (m, s) => new BancoViewModel(m, s),
+            ["Finanzas.Proveedores"] = (m, s) => new ProveedoresViewModel(m, s),
 
             ["Inventario.Almacen"] = (m, s) => new AlmacenViewModel(m, s),
             ["Inventario.Entradas"] = (m, s) => new EntradasViewModel(m, s),

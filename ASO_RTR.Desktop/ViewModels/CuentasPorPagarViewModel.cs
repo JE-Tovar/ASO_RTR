@@ -148,41 +148,12 @@ public sealed class FacturasProveedorCrudViewModel : CrudViewModelBase<FacturaPr
     }
 }
 
-/// <summary>Maestro de proveedores. Sub-listado de Finanzas · Cuentas por Pagar.</summary>
-public sealed class ProveedoresCrudViewModel : CrudViewModelBase<Proveedor, int>
-{
-    private readonly IProveedorDataSource _proveedores;
-
-    public ProveedoresCrudViewModel(IProveedorDataSource proveedores,
-                                    IServicioDialogo dialogos,
-                                    ISesionActual sesion)
-        : base(proveedores, dialogos, sesion)
-    {
-        _proveedores = proveedores;
-    }
-
-    protected override string ModuloPermiso => "Proveedores";
-
-    protected override bool CoincideBusqueda(Proveedor item, string texto) =>
-        item.Nombre.Contains(texto, StringComparison.OrdinalIgnoreCase)
-        || item.Rif.Contains(texto, StringComparison.OrdinalIgnoreCase)
-        || item.Telefono.Contains(texto, StringComparison.OrdinalIgnoreCase);
-
-    protected override Proveedor CrearNuevo() => new() { Activo = true };
-
-    protected override CrudEditorViewModelBase<Proveedor> CrearEditor(Proveedor item) =>
-        new ProveedorEditorViewModel(item, _proveedores);
-}
-
 /// <summary>
-/// Finanzas · Cuentas por Pagar: las facturas de compra y el maestro de proveedores en una
-/// pantalla conmutable, con el mismo patrón que Nómina · Empleados.
+/// Finanzas · Cuentas por Pagar: las facturas de compra pendientes de pago. El maestro de
+/// proveedores vive aparte, en Finanzas · Proveedores (<see cref="ProveedoresViewModel"/>).
 /// </summary>
 public sealed class CuentasPorPagarViewModel : PantallaViewModelBase
 {
-    public const string VistaFacturas = "Facturas";
-    public const string VistaProveedores = "Proveedores";
-
     public CuentasPorPagarViewModel(Modulo modulo, Submodulo submodulo)
         : this(modulo, submodulo, new ServicioDialogo(), SesionActual.Instancia)
     {
@@ -194,64 +165,12 @@ public sealed class CuentasPorPagarViewModel : PantallaViewModelBase
                                      ISesionActual sesion)
         : base(modulo, submodulo)
     {
-        var proveedores = DataSourceFactory.CrearProveedores();
-
         Facturas = new FacturasProveedorCrudViewModel(
-            DataSourceFactory.CrearFacturasProveedor(), proveedores, dialogos, sesion);
-
-        Proveedores = new ProveedoresCrudViewModel(proveedores, dialogos, sesion);
-
-        CambiarVistaCommand = new RelayCommand<string>(vista => VistaActual = vista);
+            DataSourceFactory.CrearFacturasProveedor(), DataSourceFactory.CrearProveedores(),
+            dialogos, sesion);
     }
 
     public FacturasProveedorCrudViewModel Facturas { get; }
-    public ProveedoresCrudViewModel Proveedores { get; }
 
-    /// <summary>
-    /// Los dos listados, aunque solo se vea uno: dar de alta un proveedor desde la vista de
-    /// facturas tiene que dejarlo disponible al conmutar, sin salir y volver a entrar.
-    /// </summary>
-    public override void Recargar()
-    {
-        Facturas.Recargar();
-        Proveedores.Recargar();
-    }
-
-    private string _vistaActual = VistaFacturas;
-    public string VistaActual
-    {
-        get => _vistaActual;
-        set
-        {
-            // Notifica todas: enumerar aqui un OnPropertyChanged por cada Mostrar… es
-            // la lista que se queda corta el dia que se agrega un padron mas.
-            if (SetProperty(ref _vistaActual, value))
-                OnTodasLasPropiedadesCambiaron();
-        }
-    }
-
-    public bool MostrarFacturas => VistaActual == VistaFacturas;
-    public bool MostrarProveedores => VistaActual == VistaProveedores;
-
-    /// <summary>
-    /// Las dos pestañas, enlazadas en DOS VÍAS al <c>IsChecked</c> de su botón, como en
-    /// <see cref="AdministracionViewModel"/>. Antes la selección viajaba solo de la vista al
-    /// ViewModel por <c>Command</c>, con <c>IsChecked="True"</c> a fuego en la primera: si algo
-    /// cambiaba <see cref="VistaActual"/> desde el código, los botones no se enteraban.
-    ///
-    /// El setter solo actúa al marcar: al desmarcar ya hay otro botón del grupo encendiéndose.
-    /// </summary>
-    public bool EsFacturas
-    {
-        get => MostrarFacturas;
-        set { if (value) VistaActual = VistaFacturas; }
-    }
-
-    public bool EsProveedores
-    {
-        get => MostrarProveedores;
-        set { if (value) VistaActual = VistaProveedores; }
-    }
-
-    public ICommand CambiarVistaCommand { get; }
+    public override void Recargar() => Facturas.Recargar();
 }

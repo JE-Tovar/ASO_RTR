@@ -64,6 +64,7 @@ public static class MatrizPermisos
         Permisos.Ver(ModuloCatalogo.Configuracion.Clave),
         Permisos.Ver("Finanzas.CuentasPorPagar"),
         Permisos.Ver("Finanzas.Banco"),
+        Permisos.Ver("Finanzas.Proveedores"),
         Permisos.Ver("Inventario.Almacen"),
         Permisos.Ver("Inventario.Entradas"),
         Permisos.Ver("Inventario.Salidas"),

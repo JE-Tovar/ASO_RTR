@@ -64,27 +64,8 @@
                          Titulo="{Binding Submodulo.Nombre}"
                          Descripcion="{Binding Submodulo.Descripcion}" />
 
-    <!-- Conmutador: las deudas y el maestro de quienes las emiten.
-
-         Pestanas y no pastillas: las pastillas son el estilo de los FILTROS de la barra de
-         abajo, y usarlas tambien aqui dibujaba igual "que miro" y "como lo acoto". -->
-    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
-      <RadioButton Content="Facturas por pagar" GroupName="VistaCxP"
-                   Style="{StaticResource SegmentedTabStyle}"
-                   IsChecked="{Binding EsFacturas, Mode=TwoWay}" />
-      <RadioButton Content="Proveedores" GroupName="VistaCxP"
-                   Style="{StaticResource SegmentedTabStyle}"
-                   IsChecked="{Binding EsProveedores, Mode=TwoWay}" />
-    </StackPanel>
-
-    <Border Grid.Row="1" Style="{StaticResource TabStripStyle}" VerticalAlignment="Bottom" />
-
     <!-- Facturas de compra -->
-    <Grid Grid.Row="2" Margin="0,16,0,0"
-          Visibility="{Binding MostrarFacturas, Converter={StaticResource BoolToVis}}">
-      <!-- DataContext en un Grid interno: compartir elemento con Visibility haría que esa
-           binding se resuelva contra el sub-VM (sin MostrarFacturas) y no contra este ViewModel. -->
-      <Grid DataContext="{Binding Facturas}">
+    <Grid Grid.Row="2" Margin="0,16,0,0" DataContext="{Binding Facturas}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
@@ -182,77 +163,6 @@
                                Visibility="{Binding HasItems, ElementName=Tabla1, Converter={StaticResource SinItemsAVis}}" />
         </Grid>
       </Border>
-      </Grid>
-    </Grid>
-
-    <!-- Maestro de proveedores -->
-    <Grid Grid.Row="2" Margin="0,16,0,0"
-          Visibility="{Binding MostrarProveedores, Converter={StaticResource BoolToVis}}">
-      <Grid DataContext="{Binding Proveedores}">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
-
-      <Border Grid.Row="0" Style="{StaticResource ToolbarStyle}">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-          </Grid.ColumnDefinitions>
-
-          <WrapPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
-            <controls:SearchBox Width="280" Margin="0,0,12,0" VerticalAlignment="Center"
-                                Texto="{Binding TextoBusqueda, Mode=TwoWay}" />
-          </WrapPanel>
-
-          <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"
-                      Margin="0,12,0,0">
-            <Button Content="Nuevo proveedor" Style="{StaticResource PrimaryButtonStyle}"
-                    Command="{Binding AgregarCommand}" />
-            <Button Content="Editar" Style="{StaticResource SecondaryButtonStyle}"
-                    Command="{Binding EditarCommand}" />
-            <Button Content="Eliminar" Style="{StaticResource SecondaryButtonStyle}"
-                    Foreground="{DynamicResource DangerTextBrush}"
-                    Command="{Binding EliminarCommand}" />
-          </StackPanel>
-        </Grid>
-      </Border>
-
-      <Border Grid.Row="1" Style="{StaticResource SectionCardStyle}" Padding="0">
-        <Grid>
-          <DataGrid x:Name="Tabla2" Style="{StaticResource DataGridStyle}"
-                    ItemsSource="{Binding ItemsView}"
-                    SelectedItem="{Binding SelectedItem}">
-            <DataGrid.Columns>
-              <controls:ColumnaTexto Header="Nº" Binding="{Binding Id}" Width="44" />
-              <controls:ColumnaTexto Header="Proveedor" Binding="{Binding Nombre}" Width="26*" MinWidth="140" />
-              <controls:ColumnaTexto Header="RIF" Binding="{Binding Rif}" Width="14*" MinWidth="100" />
-              <controls:ColumnaTexto Header="Teléfono" Binding="{Binding Telefono}" Width="14*" MinWidth="100" />
-              <controls:ColumnaTexto Header="Notas" Binding="{Binding Notas}" Width="20*" MinWidth="110" />
-              <DataGridTemplateColumn Header="Estado" Width="96">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <Border Style="{StaticResource ChipActivoStyle}">
-                      <TextBlock Text="{Binding EstadoTexto}" FontSize="{StaticResource FsCaption}" />
-                    </Border>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-            </DataGrid.Columns>
-          </DataGrid>
-
-          <controls:EmptyState Icono="{x:Static controls:Iconos.Proveedor}"
-                               Titulo="No hay proveedores"
-                               Detalle="Da de alta un proveedor antes de registrar sus facturas."
-                               Visibility="{Binding HasItems, ElementName=Tabla2, Converter={StaticResource SinItemsAVis}}" />
-        </Grid>
-      </Border>
-      </Grid>
     </Grid>
   </Grid>
 </UserControl>
