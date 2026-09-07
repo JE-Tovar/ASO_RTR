@@ -1,0 +1,34 @@
+<UserControl x:Class="ASO_RTR.Desktop.Views.ProcesoEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:ASO_RTR.Desktop.Controls"
+             mc:Ignorable="d"
+             d:DesignWidth="380">
+
+  <StackPanel>
+    <controls:FormField Etiqueta="Tipo de botella">
+      <ComboBox Style="{StaticResource FormComboBoxStyle}"
+                ItemsSource="{Binding TiposBotella}"
+                DisplayMemberPath="Etiqueta"
+                SelectedItem="{Binding TipoBotellaSeleccionado}" />
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Fecha">
+      <DatePicker Style="{StaticResource FormDatePickerStyle}"
+                  SelectedDate="{Binding FechaCreacion}" />
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Notas">
+      <TextBox Style="{StaticResource FormTextBoxStyle}"
+               AcceptsReturn="True" MinLines="2" TextWrapping="Wrap"
+               VerticalContentAlignment="Top"
+               Text="{Binding Notas, UpdateSourceTrigger=PropertyChanged}" />
+    </controls:FormField>
+
+    <TextBlock Text="Las etapas de este proceso (control de calidad, limpieza, empacado, etiquetado…) se agregan por separado, una por una, desde la pestaña Etapas. La cantidad de botellas se registra al completar cada etapa."
+               FontSize="{StaticResource FsCaption}" TextWrapping="Wrap"
+               Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" />
+  </StackPanel>
+</UserControl>

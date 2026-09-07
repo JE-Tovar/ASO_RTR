@@ -64,6 +64,12 @@ public static class MatrizPermisos
         Permisos.Ver(ModuloCatalogo.Configuracion.Clave),
         Permisos.Ver("Finanzas.CuentasPorPagar"),
         Permisos.Ver("Finanzas.Banco"),
+        Permisos.Ver("Inventario.Almacen"),
+        Permisos.Ver("Inventario.Entradas"),
+        Permisos.Ver("Inventario.Salidas"),
+        Permisos.Ver("Nomina.Empleados"),
+        Permisos.Ver("Operaciones.Procesos"),
+        Permisos.Ver("Catalogo.TiposBotella"),
 
         Permisos.Proveedores.Crear,
         Permisos.Proveedores.Editar,
@@ -71,24 +77,41 @@ public static class MatrizPermisos
         Permisos.FacturasProveedor.Crear,
         Permisos.FacturasProveedor.Editar,
 
-        Permisos.Ver("Inventario.Almacen"),
-        Permisos.Ver("Inventario.Entradas"),
-        Permisos.Ver("Inventario.Salidas"),
-
         Permisos.Articulos.Crear,
         Permisos.Articulos.Editar,
 
         Permisos.EntradasInventario.Crear,
         Permisos.SalidasInventario.Crear,
 
+        Permisos.Empleados.Crear,
+        Permisos.Empleados.Editar,
+
+        Permisos.Procesos.Crear,
+        Permisos.Procesos.Editar,
+
+        Permisos.Etapas.Crear,
+        Permisos.Etapas.Editar,
+
+        Permisos.TiposBotella.Crear,
+        Permisos.TiposBotella.Editar,
+
+        Permisos.Operaciones.Iniciar,
+        Permisos.Operaciones.Completar,
+        Permisos.Operaciones.Rechazar,
+        Permisos.Operaciones.Reintentar,
+
         Permisos.Peticiones.Solicitar
 
         // Fuera a propósito:
         // - Finanzas.Pagar / Banco.*: mover dinero es de Supervisor.
-        // - Proveedores.Eliminar / FacturasProveedor.Eliminar: borrar es de Supervisor.
+        // - Proveedores.Eliminar / FacturasProveedor.Eliminar / Empleados.Eliminar /
+        //   Procesos.Eliminar / Etapas.Eliminar / Articulos.Eliminar: borrar es de Supervisor.
         // - EntradasInventario.Anular / SalidasInventario.Anular: deshacer un documento del
         //   almacén es de Supervisor, igual que deshacer uno de Finanzas.
-        // - Articulos.Eliminar: depurar el catálogo es de Supervisor.
+        //
+        // Las transiciones de Operaciones (Iniciar/Completar/Rechazar/Reintentar) SÍ son de
+        // Operador: avanzar una etapa es el trabajo operativo del día a día en planta, no un
+        // movimiento de dinero como Finanzas.Pagar.
     ];
 
     /// <summary>
@@ -101,6 +124,10 @@ public static class MatrizPermisos
         [
             Permisos.Proveedores.Eliminar,
             Permisos.FacturasProveedor.Eliminar,
+            Permisos.Empleados.Eliminar,
+            Permisos.Procesos.Eliminar,
+            Permisos.Etapas.Eliminar,
+            Permisos.TiposBotella.Eliminar,
 
             Permisos.Finanzas.Pagar,
             Permisos.Finanzas.Anular,

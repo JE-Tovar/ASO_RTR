@@ -66,6 +66,9 @@ ASO_RTR/
 |---|---|---|
 | Finanzas | Cuentas por Pagar · Banco | módulo de ejemplo, funcional |
 | Inventario | Almacén · Entradas · Salidas | funcional |
+| Nómina | Empleados | funcional |
+| Operaciones | Procesos | funcional |
+| Catálogo | Tipos de Botella | funcional |
 
 Además hay **cuatro secciones fijas** según el rol: **Inicio**, **Peticiones** (bandeja de
 solicitudes de cambio), **Administración** (usuarios y permisos, y los datos de la organización)
@@ -98,8 +101,7 @@ pertenece algo: se estampa la de la instalación.
 
 ## Estado del proyecto
 
-El armazón técnico está completo y probado (compila, migra y arranca). Hay dos módulos de
-negocio: **Finanzas** (el ejemplo conservado del scaffold) e **Inventario** (el primero
-construido para esta planta). Lo que sigue pendiente de definición —los módulos de producción,
-los roles reales de la planta, el color de marca— está en la sección "PROVISIONAL" de
-`CLAUDE.md`.
+El armazón técnico está completo y probado (compila, migra y arranca). Sobre él ya hay cinco
+módulos de negocio: **Finanzas** (el ejemplo conservado del scaffold), **Inventario**, **Nómina**,
+**Operaciones** y **Catálogo**. Lo que sigue pendiente de definición —los roles reales de la
+planta, el color de marca— está en la sección "PROVISIONAL" de `CLAUDE.md`.

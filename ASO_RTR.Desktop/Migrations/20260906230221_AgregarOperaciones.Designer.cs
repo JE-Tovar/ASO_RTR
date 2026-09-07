@@ -4,6 +4,7 @@ using ASO_RTR.Desktop.BD;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASO_RTR.Desktop.Migrations
 {
     [DbContext(typeof(AsoRtrDbContext))]
-    partial class AsoRtrDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260906230221_AgregarOperaciones")]
+    partial class AgregarOperaciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,59 +24,6 @@ namespace ASO_RTR.Desktop.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.Articulo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("Minimo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Notas")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Ubicacion")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<int>("Unidad")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizacionId", "Codigo")
-                        .IsUnique();
-
-                    b.ToTable("Articulos");
-                });
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.CuentaBancaria", b =>
                 {
@@ -170,96 +120,6 @@ namespace ASO_RTR.Desktop.Migrations
                     b.ToTable("Empleados");
                 });
 
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.EntradaInventario", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CompradoPor")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("CreadoPorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreadoPorNombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FacturaProveedorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FacturaProveedorNumero")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaAnulacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaVencimiento")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MotivoAnulacion")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Numero")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("NumeroDocumento")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Observaciones")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProveedorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProveedorNombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("Tipo")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacturaProveedorId");
-
-                    b.HasIndex("OrganizacionId", "Numero")
-                        .IsUnique();
-
-                    b.ToTable("EntradasInventario");
-                });
-
             modelBuilder.Entity("ASO_RTR.Desktop.Models.Etapa", b =>
                 {
                     b.Property<int>("Id")
@@ -267,9 +127,6 @@ namespace ASO_RTR.Desktop.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CantidadProcesada")
-                        .HasColumnType("int");
 
                     b.Property<int>("CreadoPorId")
                         .HasColumnType("int");
@@ -605,6 +462,9 @@ namespace ASO_RTR.Desktop.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CantidadBotellas")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
@@ -616,13 +476,10 @@ namespace ASO_RTR.Desktop.Migrations
                     b.Property<int>("OrganizacionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TipoBotellaEtiqueta")
+                    b.Property<string>("TipoBotella")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("TipoBotellaId")
-                        .HasColumnType("int");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -668,124 +525,6 @@ namespace ASO_RTR.Desktop.Migrations
                     b.ToTable("Proveedores");
                 });
 
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.SalidaInventario", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AutorizadoPorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AutorizadoPorNombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("CreadoPorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Destino")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DestinoDetalle")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaAnulacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Motivo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MotivoAnulacion")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Numero")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Observaciones")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RetiradoPor")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizacionId", "Numero")
-                        .IsUnique();
-
-                    b.ToTable("SalidasInventario");
-                });
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.TipoBotella", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("BotellasPorCaja")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Marca")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Medida")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("Niveles")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("OrganizacionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Presentacion")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnidadesPorNivel")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TiposBotella");
-                });
-
             modelBuilder.Entity("ASO_RTR.Desktop.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -829,59 +568,6 @@ namespace ASO_RTR.Desktop.Migrations
                         .IsUnique();
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.EntradaInventario", b =>
-                {
-                    b.OwnsMany("ASO_RTR.Desktop.Models.EntradaInventarioLinea", "Lineas", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("ArticuloCodigo")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
-
-                            b1.Property<int>("ArticuloId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ArticuloNombre")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)");
-
-                            b1.Property<decimal>("Cantidad")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<int>("EntradaInventarioId")
-                                .HasColumnType("int");
-
-                            b1.Property<decimal>("PrecioUnitario")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<decimal>("Subtotal")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<string>("UnidadTexto")
-                                .IsRequired()
-                                .HasMaxLength(30)
-                                .HasColumnType("nvarchar(30)");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("EntradaInventarioId");
-
-                            b1.ToTable("EntradaInventarioLinea");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EntradaInventarioId");
-                        });
-
-                    b.Navigation("Lineas");
                 });
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.Etapa", b =>
@@ -955,53 +641,6 @@ namespace ASO_RTR.Desktop.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("FacturaProveedorId");
-                        });
-
-                    b.Navigation("Lineas");
-                });
-
-            modelBuilder.Entity("ASO_RTR.Desktop.Models.SalidaInventario", b =>
-                {
-                    b.OwnsMany("ASO_RTR.Desktop.Models.SalidaInventarioLinea", "Lineas", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("ArticuloCodigo")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
-
-                            b1.Property<int>("ArticuloId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ArticuloNombre")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)");
-
-                            b1.Property<decimal>("Cantidad")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<int>("SalidaInventarioId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("UnidadTexto")
-                                .IsRequired()
-                                .HasMaxLength(30)
-                                .HasColumnType("nvarchar(30)");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("SalidaInventarioId");
-
-                            b1.ToTable("SalidaInventarioLinea");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SalidaInventarioId");
                         });
 
                     b.Navigation("Lineas");

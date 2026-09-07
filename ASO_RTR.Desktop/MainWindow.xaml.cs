@@ -162,6 +162,10 @@ public partial class MainWindow : Window
             ["Inventario.Almacen"] = (m, s) => new AlmacenViewModel(m, s),
             ["Inventario.Entradas"] = (m, s) => new EntradasViewModel(m, s),
             ["Inventario.Salidas"] = (m, s) => new SalidasViewModel(m, s),
+
+            ["Nomina.Empleados"] = (m, s) => new EmpleadosViewModel(m, s),
+            ["Operaciones.Procesos"] = (m, s) => new OperacionesViewModel(m, s),
+            ["Catalogo.TiposBotella"] = (m, s) => new TiposBotellaViewModel(m, s),
         };
 
     private object CrearVistaModulo(Modulo modulo)

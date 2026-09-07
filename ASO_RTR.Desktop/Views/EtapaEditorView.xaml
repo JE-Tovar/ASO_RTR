@@ -1,0 +1,67 @@
+<UserControl x:Class="ASO_RTR.Desktop.Views.EtapaEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:ASO_RTR.Desktop.Controls"
+             mc:Ignorable="d"
+             d:DesignWidth="520">
+
+  <StackPanel>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="12" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <StackPanel Grid.Column="0">
+        <controls:FormField Etiqueta="Proceso">
+          <ComboBox Style="{StaticResource FormComboBoxStyle}"
+                    ItemsSource="{Binding Procesos}"
+                    DisplayMemberPath="Etiqueta"
+                    SelectedItem="{Binding ProcesoSeleccionado}" />
+        </controls:FormField>
+      </StackPanel>
+
+      <StackPanel Grid.Column="2">
+        <controls:FormField Etiqueta="Etapa">
+          <ComboBox Style="{StaticResource FormComboBoxStyle}"
+                    ItemsSource="{Binding TiposEtapa}"
+                    DisplayMemberPath="Texto"
+                    SelectedValuePath="Valor"
+                    SelectedValue="{Binding TipoSeleccionado}" />
+        </controls:FormField>
+      </StackPanel>
+    </Grid>
+
+    <controls:FormField Etiqueta="Empleados involucrados">
+      <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+              CornerRadius="{StaticResource RadSm}" Padding="8" MaxHeight="220">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding Empleados}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <CheckBox Margin="0,4,0,4" Cursor="Hand"
+                          Content="{Binding Empleado.NombreCompleto}"
+                          IsChecked="{Binding Seleccionado}"
+                          Foreground="{DynamicResource TextPrimaryBrush}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Notas">
+      <TextBox Style="{StaticResource FormTextBoxStyle}"
+               AcceptsReturn="True" MinLines="2" TextWrapping="Wrap"
+               VerticalContentAlignment="Top"
+               Text="{Binding Notas, UpdateSourceTrigger=PropertyChanged}" />
+    </controls:FormField>
+
+    <TextBlock Text="Iniciar, completar, rechazar y reintentar la etapa se hace desde los botones del listado, una vez guardada."
+               FontSize="{StaticResource FsCaption}" TextWrapping="Wrap"
+               Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" />
+  </StackPanel>
+</UserControl>

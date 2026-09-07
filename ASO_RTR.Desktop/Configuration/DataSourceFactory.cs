@@ -18,6 +18,10 @@ public static class DataSourceFactory
 {
     private static IProveedorDataSource? _proveedores;
     private static IFacturaProveedorDataSource? _facturasProveedor;
+    private static IEmpleadoDataSource? _empleados;
+    private static IProcesoDataSource? _procesos;
+    private static IEtapaDataSource? _etapas;
+    private static ITipoBotellaDataSource? _tiposBotella;
     private static ICuentaBancariaDataSource? _cuentasBancarias;
     private static IMovimientoBancoDataSource? _movimientosBanco;
     private static IOrganizacionDataSource? _organizaciones;
@@ -35,6 +39,18 @@ public static class DataSourceFactory
 
     public static IFacturaProveedorDataSource CrearFacturasProveedor() =>
         _facturasProveedor ??= new SqlFacturaProveedorDataSource();
+
+    public static IEmpleadoDataSource CrearEmpleados() =>
+        _empleados ??= new SqlEmpleadoDataSource();
+
+    public static IProcesoDataSource CrearProcesos() =>
+        _procesos ??= new SqlProcesoDataSource();
+
+    public static IEtapaDataSource CrearEtapas() =>
+        _etapas ??= new SqlEtapaDataSource();
+
+    public static ITipoBotellaDataSource CrearTiposBotella() =>
+        _tiposBotella ??= new SqlTipoBotellaDataSource();
 
     public static ICuentaBancariaDataSource CrearCuentasBancarias() =>
         _cuentasBancarias ??= new SqlCuentaBancariaDataSource();

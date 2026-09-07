@@ -61,9 +61,10 @@ F5 en Visual Studio (`ASO_RTR.slnx`).
 
 ## Estructura de módulos
 
-Hoy hay **dos módulos de negocio**: **Finanzas** (Cuentas por Pagar y Banco — el ejemplo
-conservado del scaffold) e **Inventario** (Almacén, Entradas y Salidas — el primero construido
-para esta planta), más **cuatro módulos fijados** sin submódulos: **Inicio**, **Peticiones**
+Hoy hay **cinco módulos de negocio**: **Finanzas** (Cuentas por Pagar y Banco — el ejemplo
+conservado del scaffold), **Inventario** (Almacén, Entradas y Salidas), **Nómina** (Empleados),
+**Operaciones** (Procesos y sus etapas) y **Catálogo** (Tipos de Botella), más **cuatro módulos
+fijados** sin submódulos: **Inicio**, **Peticiones**
 (bandeja de solicitudes de cambio), **Administración** (usuarios con sus permisos, y los datos de la propia
 organización) y **Configuración** (apariencia, cuenta propia, preferencias de la máquina — anclada
 al pie del sidebar, fuera de su `ScrollViewer`, porque no es trabajo del día).
@@ -75,7 +76,8 @@ al pie del sidebar, fuera de su `ScrollViewer`, porque no es trabajo del día).
 - `Views/InicioView` — lanzador con una tarjeta por módulo.
 - `Views/ModuloDashboardView` — resumen del módulo: indicadores + tarjeta por submódulo. Los
   valores los calcula `ModuloDashboardViewModel.CalcularIndicadores` (un `switch` por clave de
-  módulo) — hoy con los casos `"Finanzas"` e `"Inventario"`.
+  módulo) — hoy con los casos `"Finanzas"`, `"Inventario"`, `"Nomina"`, `"Operaciones"` y
+  `"Catalogo"`.
 - `Views/SubmoduloView` — submódulo en construcción, para cuando se agregue uno nuevo al catálogo
   antes de tener su pantalla real.
 - Framework CRUD reutilizable (`CrudViewModelBase`, `CrudEditorViewModelBase`, `CrudEditorWindow`,
@@ -284,13 +286,14 @@ deliberados, fáciles de revisar y cambiar; no son bugs:
    prefigurado en el modelo de datos actual.
 4. **Nombre de la empresa / razón social**: el `.csproj` usa "ASO RTR" como placeholder en
    `Company`/`Description`.
-5. **Módulos de producción**: control de calidad, limpieza, empacado y etiquetado siguen sin
-   construir (Inventario, que es transversal a todos ellos, ya está). Usar la receta de "Cómo se
-   agrega un submódulo" de más arriba; como referencia, el paquete de Cuentas por Pagar para los
-   cuatro patrones del scaffold, e Inventario para un módulo construido de cero contra este
-   armazón (kardex derivado, documento con líneas editables, acoplamiento entre módulos).
-   Cuando aparezcan, revisar si `AreaDestino` (la lista de procesos a los que el almacén
-   despacha) sigue coincidiendo con los procesos reales.
+5. **Módulos de producción**: los procesos de planta se modelan hoy de forma genérica en
+   **Operaciones** (`Proceso` con sus `Etapa`s). Si control de calidad, limpieza, empacado y
+   etiquetado acaban necesitando pantallas propias, usar la receta de "Cómo se agrega un
+   submódulo"; como referencia, el paquete de Cuentas por Pagar para los cuatro patrones del
+   scaffold, e Inventario para un módulo construido de cero contra este armazón (kardex derivado,
+   documento con líneas editables, acoplamiento entre módulos). Pendiente de revisar: que
+   `AreaDestino` (las áreas a las que el almacén despacha) siga coincidiendo con los procesos
+   reales de Operaciones — hoy son dos listas independientes.
 6. **`Solicitables` vacío**: no hay ninguna petición de cambio configurada todavía — ver
    "Peticiones de cambio" arriba. Los dos candidatos naturales ya existen:
    `EntradasInventario.Anular` y `SalidasInventario.Anular`, que hoy un Operador simplemente no

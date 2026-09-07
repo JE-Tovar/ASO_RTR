@@ -27,6 +27,16 @@ public class AsoRtrDbContext : DbContext
     public DbSet<EntradaInventario> EntradasInventario { get; set; }
     public DbSet<SalidaInventario> SalidasInventario { get; set; }
 
+    // ---- Nómina · Empleados ----
+    public DbSet<Empleado> Empleados { get; set; }
+
+    // ---- Operaciones · Procesos y Etapas ----
+    public DbSet<Proceso> Procesos { get; set; }
+    public DbSet<Etapa> Etapas { get; set; }
+
+    // ---- Catálogo · Tipos de Botella ----
+    public DbSet<TipoBotella> TiposBotella { get; set; }
+
     /// <summary>
     /// Organización sobre la que trabaja ESTE contexto. Se toma del ámbito al construirlo y no
     /// cambia después: cada método de las fuentes Sql abre su propio contexto, así que un cambio
@@ -326,6 +336,67 @@ public class AsoRtrDbContext : DbContext
 
                 linea.Ignore(x => x.CantidadTexto);
                 linea.Ignore(x => x.ArticuloTexto);
+            });
+        });
+
+        // ---- Nómina · Empleados ----
+
+        modelBuilder.Entity<Empleado>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Cedula).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.NombreCompleto).IsRequired().HasMaxLength(150);
+            entity.Property(e => e.Cargo).HasMaxLength(100);
+            entity.Property(e => e.Telefono).HasMaxLength(30);
+
+            entity.Ignore(e => e.EstadoTexto);
+            entity.Ignore(e => e.Etiqueta);
+        });
+
+        // ---- Operaciones · Procesos y Etapas ----
+
+        modelBuilder.Entity<Proceso>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.TipoBotellaEtiqueta).HasMaxLength(150);
+            entity.Property(p => p.Notas).HasMaxLength(500);
+
+            entity.Ignore(p => p.Etiqueta);
+        });
+
+        // ---- Catálogo · Tipos de Botella ----
+
+        modelBuilder.Entity<TipoBotella>(entity =>
+        {
+            entity.HasKey(t => t.Id);
+            entity.Property(t => t.Marca).IsRequired().HasMaxLength(100);
+            entity.Property(t => t.Nombre).IsRequired().HasMaxLength(150);
+            entity.Property(t => t.Medida).IsRequired().HasMaxLength(30);
+
+            entity.Ignore(t => t.PresentacionTexto);
+            entity.Ignore(t => t.BotellasPorNivel);
+            entity.Ignore(t => t.BotellasPorPaleta);
+            entity.Ignore(t => t.EstadoTexto);
+            entity.Ignore(t => t.Etiqueta);
+        });
+
+        modelBuilder.Entity<Etapa>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ProcesoEtiqueta).HasMaxLength(150);
+            entity.Property(e => e.MotivoRechazo).HasMaxLength(500);
+            entity.Property(e => e.Notas).HasMaxLength(500);
+
+            entity.Ignore(e => e.TipoTexto);
+            entity.Ignore(e => e.EstadoTexto);
+            entity.Ignore(e => e.EmpleadosTexto);
+
+            entity.OwnsMany(e => e.Empleados, empleado =>
+            {
+                empleado.WithOwner().HasForeignKey("EtapaId");
+                empleado.Property<int>("Id");
+                empleado.HasKey("Id");
+                empleado.Property(x => x.EmpleadoNombre).HasMaxLength(150);
             });
         });
 

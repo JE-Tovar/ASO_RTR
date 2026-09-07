@@ -83,6 +83,33 @@ public static class ModuloCatalogo
                     "Historial de entradas y registro de lo que llega al almacén.", Iconos.Entradas),
                 new Submodulo("Inventario.Salidas", "Salidas",
                     "Historial de salidas y emisión de boletos de salida.", Iconos.Salidas)
+            ]),
+        new Modulo(
+            "Nomina",
+            "Nómina",
+            "Personal de la planta.",
+            Iconos.Usuarios,
+            [
+                new Submodulo("Nomina.Empleados", "Empleados",
+                    "Registro del personal de la planta.", Iconos.Usuarios)
+            ]),
+        new Modulo(
+            "Operaciones",
+            "Operaciones",
+            "Procesos de control de calidad, limpieza, empacado y etiquetado.",
+            Iconos.CuentasPorPagar,
+            [
+                new Submodulo("Operaciones.Procesos", "Procesos",
+                    "Procesos en planta y sus etapas.", Iconos.CuentasPorPagar)
+            ]),
+        new Modulo(
+            "Catalogo",
+            "Catálogo",
+            "Información maestra de los productos: tipos de botella, presentación y paletizado.",
+            Iconos.Proveedor,
+            [
+                new Submodulo("Catalogo.TiposBotella", "Tipos de Botella",
+                    "Botellas que maneja la empresa, su empaque y su paleta.", Iconos.Proveedor)
             ])
     ];
 

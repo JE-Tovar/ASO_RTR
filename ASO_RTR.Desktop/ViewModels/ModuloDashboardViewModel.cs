@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ASO_RTR.Desktop.Configuration;
 using ASO_RTR.Desktop.Controls;
+using ASO_RTR.Desktop.Models;
 using ASO_RTR.Desktop.Navigation;
 using ASO_RTR.Desktop.Services;
 
@@ -141,6 +142,9 @@ public sealed class ModuloDashboardViewModel : ViewModelBase, IRecargable
     {
         "Finanzas" => CalcularFinanzas(),
         "Inventario" => CalcularInventario(),
+        "Nomina" => CalcularNomina(),
+        "Operaciones" => CalcularOperaciones(),
+        "Catalogo" => CalcularCatalogo(),
         _ => null
     };
 
@@ -216,6 +220,47 @@ public sealed class ModuloDashboardViewModel : ViewModelBase, IRecargable
             new Indicador("Artículos", $"{inventario.TotalArticulosActivos()}", "activos en el catálogo"),
             new Indicador("Comprado este mes", $"{servicioEntradas.TotalComprasDelMes():N2}",
                 $"en {servicioEntradas.DelMes().Count} entradas · {servicioSalidas.DelMes().Count} salidas")
+        ];
+    }
+
+    private static IReadOnlyList<Indicador> CalcularNomina()
+    {
+        var empleados = DataSourceFactory.CrearEmpleados().GetAll().ToList();
+        var activos = empleados.Count(e => e.Activo);
+        var inactivos = empleados.Count - activos;
+
+        return
+        [
+            new Indicador("Empleados activos", activos.ToString(), "personal vigente en la planta"),
+            new Indicador("Inactivos", inactivos.ToString(), "conservados para el histórico")
+        ];
+    }
+
+    private static IReadOnlyList<Indicador> CalcularOperaciones()
+    {
+        var procesos = DataSourceFactory.CrearProcesos().GetAll().Count();
+        var etapas = DataSourceFactory.CrearEtapas().GetAll().ToList();
+
+        var enProceso = etapas.Count(e => e.Estado == EstadoEtapa.EnProceso);
+        var rechazadas = etapas.Count(e => e.Estado == EstadoEtapa.Rechazada);
+
+        return
+        [
+            new Indicador("Procesos", procesos.ToString(), "registrados en total"),
+            new Indicador("Etapas en curso", enProceso.ToString(), "trabajándose ahora mismo"),
+            new Indicador("Rechazadas", rechazadas.ToString(), "esperando reproceso",
+                SegunCuenta(rechazadas, desdeCritico: 3))
+        ];
+    }
+
+    private static IReadOnlyList<Indicador> CalcularCatalogo()
+    {
+        var tipos = DataSourceFactory.CrearTiposBotella().GetAll().ToList();
+        var activos = tipos.Count(t => t.Activo);
+
+        return
+        [
+            new Indicador("Tipos de botella", activos.ToString(), "activos en el catálogo")
         ];
     }
 }
