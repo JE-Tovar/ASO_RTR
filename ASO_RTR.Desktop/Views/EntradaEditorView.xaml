@@ -156,13 +156,11 @@
                                   Visibility="{Binding Datos.MuestraPrecios, Source={StaticResource Puente},
                                                        Converter={StaticResource BoolToVis}}" />
 
-          <DataGridTemplateColumn Width="44">
+          <DataGridTemplateColumn Width="56">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <Button Content="{x:Static controls:Iconos.Limpiar}"
-                        FontFamily="{StaticResource IconFont}"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Margin="2" Padding="6,4" MinWidth="0"
+                        Style="{StaticResource LineaBotonQuitarStyle}"
                         ToolTip="Quitar esta línea"
                         Command="{Binding Datos.QuitarLineaCommand, Source={StaticResource Puente}}"
                         CommandParameter="{Binding}" />
