@@ -7,6 +7,7 @@
         xmlns:views="clr-namespace:ASO_RTR.Desktop.Views"
         mc:Ignorable="d"
         Title="ASO RTR"
+        Icon="pack://application:,,,/Assets/Logo/logo.ico"
         Height="800" Width="1280"
         MinHeight="640" MinWidth="1024"
         WindowStartupLocation="CenterScreen"

@@ -6,6 +6,7 @@
         xmlns:controls="clr-namespace:ASO_RTR.Desktop.Controls"
         mc:Ignorable="d"
         Title="Iniciar sesión — ASO RTR"
+        Icon="pack://application:,,,/Assets/Logo/logo.ico"
         Width="420" MinHeight="380" MaxHeight="720"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
@@ -23,11 +24,15 @@
       </Grid.RowDefinitions>
 
       <!-- Marca. Es la primera pantalla del producto y lo unico que se ve antes de entrar. -->
-      <StackPanel Grid.Row="0" Margin="{StaticResource TkBloque}">
-        <TextBlock Text="ASO RTR"
+      <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="{StaticResource TkBloque}">
+        <Image Source="pack://application:,,,/Assets/Logo/logo-256.png"
+               Width="72" Height="72" Stretch="Uniform" VerticalAlignment="Center"
+               RenderOptions.BitmapScalingMode="HighQuality" />
+        <TextBlock Text="ASO RTR" Margin="10,0,0,0"
                    FontSize="{StaticResource FsDisplay}"
                    FontWeight="{StaticResource FwBold}"
-                   Foreground="{DynamicResource PrimaryBrush}" />
+                   Foreground="{DynamicResource PrimaryBrush}"
+                   VerticalAlignment="Center" />
       </StackPanel>
 
       <Border Grid.Row="1" Style="{StaticResource SectionCardStyle}">

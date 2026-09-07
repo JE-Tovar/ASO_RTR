@@ -263,6 +263,36 @@ cajas blancas). Las cuatro reglas de siempre siguen aplicando al escribir XAML n
    ninguna garantía de contraste, en vez del `#FFAD3E` que se espera ver. Ver el comentario de
    cabecera de `Colors.xaml` para el detalle de contraste de cada escalón de la familia.
 
+## Logo (2026-09-07)
+
+`Assets/Logo/` trae el logo real de la empresa, ya rasterizado porque no hay lector de SVG en el
+proyecto. El original **no se guarda versionado**: quien lo aportó lo dejó en
+`docs/RTR_icon_only.svg` (ignorado por git, ver "Documentación de referencia"), y ese archivo
+traía un renglón de texto de la razón social cortado y pegado sin espacio al borde inferior del
+ícono — recorte de un export previo, no parte del diseño; hay que volver a recortarlo si se
+re-exporta desde el vector original (el arco azul no cierra hasta y≈348 en las coordenadas del
+SVG; cualquier recorte tiene que dejarlo completo).
+
+Hay **dos variantes**, para dos contextos distintos:
+
+- **`logo-256.png`** — el logo completo a color (globo con rejilla + flechas + "RTR"), usado
+  donde hay espacio de sobra: `Sidebar.xaml` (44px) y `LoginView.xaml` (72px), con
+  `RenderOptions.BitmapScalingMode="HighQuality"` en el `Image`. Por debajo de ~64px este logo se
+  ve borroso/apelmazado — es el detalle fino de la rejilla del globo, no arreglable por más
+  calidad de escalado que se le ponga; de ahí el piso de 44px en el sidebar en vez de calzarlo en
+  la fila de 30px que traía el placeholder.
+- **`logo.ico`** — variante recortada **solo del globo y las flechas, sin las letras "RTR"**,
+  para `ApplicationIcon` en el `.csproj` y el `Icon` de las cuatro ventanas (esto es lo que
+  realmente pinta Windows en la barra de tareas, Alt+Tab y el Administrador de tareas — no el
+  ícono del `.exe`). Se descartaron dos alternativas antes de llegar a esta: el logo completo
+  (con letras) es ilegible a 16–32px por la rejilla fina, igual que `logo-256.png`; y solo las
+  letras "RTR" en azul de marca sin fondo se leían mejor pero casi desaparecían en una barra de
+  tareas oscura (`#1E427C` sobre transparente tiene contraste pésimo contra un tema oscuro). El
+  globo+flechas sin letras funciona en los dos temas porque conserva el naranja (`#EF7E22`) y el
+  blanco del hueco central, que dan contraste sin necesitar un fondo sólido propio. El hueco
+  donde iban las letras se deja transparente (recorte rectangular sobre el render ya recortado en
+  y=370), no se intentó rellenar la rejilla ahí — a los tamaños de ícono no se nota.
+
 ## Configuración y preferencias
 
 Tres pestañas en `Views/ConfiguracionView`: **Apariencia** (tema, escala), **Mi cuenta** (ficha +

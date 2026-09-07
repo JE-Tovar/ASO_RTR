@@ -14,21 +14,16 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <!-- Marca. El monograma no es adorno: es lo unico de la pantalla que se reconoce de un
-         vistazo desde lejos, y da al menu un punto de anclaje arriba a la izquierda que antes no
-         tenia — la aplicacion empezaba directamente con texto. -->
+    <!-- Marca. El logo no es adorno: es lo unico de la pantalla que se reconoce de un vistazo
+         desde lejos, y da al menu un punto de anclaje arriba a la izquierda que antes no tenia —
+         la aplicacion empezaba directamente con texto. Es un mapa de bits (no hay lector de SVG
+         en el proyecto) a color propio, por eso no lleva DynamicResource ni fondo detras. -->
     <Border Grid.Row="0" Padding="16,16,16,12"
             BorderBrush="{DynamicResource SidebarBorderBrush}" BorderThickness="0,0,0,1">
       <StackPanel Orientation="Horizontal">
-        <!-- PrimaryButtonBrush y no PrimaryBrush: este relleno lleva OnAccentBrush encima, y
-             PrimaryBrush es solo color de texto en la paleta clara (ver Colors.xaml). -->
-        <Border Width="30" Height="30" CornerRadius="{StaticResource RadSm}"
-                Background="{DynamicResource PrimaryButtonBrush}" VerticalAlignment="Center">
-          <TextBlock Text="A" FontSize="{StaticResource FsTitle}"
-                     FontWeight="{StaticResource FwBold}"
-                     Foreground="{DynamicResource OnAccentBrush}"
-                     HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Border>
+        <Image Source="pack://application:,,,/Assets/Logo/logo-256.png"
+               Width="44" Height="44" Stretch="Uniform" VerticalAlignment="Center"
+               RenderOptions.BitmapScalingMode="HighQuality" />
 
         <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
           <TextBlock Text="ASO RTR"

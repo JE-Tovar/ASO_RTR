@@ -12,6 +12,7 @@
     <Product>ASO RTR</Product>
     <Company>ASO RTR</Company>
     <Description>Sistema de gestion de control de calidad, limpieza, empacado y etiquetado de botellas</Description>
+    <ApplicationIcon>Assets\Logo\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,6 +37,20 @@
     <Resource Include="Assets\Fonts\Satoshi-Regular.ttf" />
     <Resource Include="Assets\Fonts\Satoshi-Medium.ttf" />
     <Resource Include="Assets\Fonts\Satoshi-Bold.ttf" />
+  </ItemGroup>
+
+  <!-- Logo de marca, recortado de docs/RTR_icon_only.svg (que traia un renglon de texto cortado
+       pegado al borde inferior). Se distribuye ya rasterizado (no hay lector de SVG en el
+       proyecto): logo-256.png es el logo completo a color (globo + flechas + "RTR"), usado donde
+       hay espacio (sidebar, login) — por debajo de ~64px se ve borroso por la rejilla fina del
+       globo. logo.ico es un recorte aparte de solo el globo y las flechas, sin las letras "RTR"
+       (ilegibles a 16-32px) y sin fondo solido (el naranja de la flecha ya da contraste en tema
+       claro y oscuro). logo.ico va tambien como Resource (no solo como ApplicationIcon) para
+       poder referenciarlo por pack URI desde el Icon= de cada Window — eso es lo que Windows usa
+       de verdad en la barra de tareas/Alt+Tab/Administrador de tareas, no el icono del .exe. -->
+  <ItemGroup>
+    <Resource Include="Assets\Logo\logo-256.png" />
+    <Resource Include="Assets\Logo\logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
