@@ -68,14 +68,23 @@
     <views:EtapaEditorView />
   </DataTemplate>
 
-  <DataTemplate DataType="{x:Type vm:CantidadEditorViewModel}">
-    <views:CantidadEditorView />
+
+  <DataTemplate DataType="{x:Type vm:CompletarEtapaViewModel}">
+    <views:CompletarEtapaView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:EtapaDetalleViewModel}">
+    <views:EtapaDetalleView />
   </DataTemplate>
 
   <!-- Catálogo · Tipos de Botella -->
 
   <DataTemplate DataType="{x:Type vm:TipoBotellaEditorViewModel}">
     <views:TipoBotellaEditorView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:TipoBotellaDetalleViewModel}">
+    <views:TipoBotellaDetalleView />
   </DataTemplate>
 
   <!-- Armazón -->

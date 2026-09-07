@@ -35,6 +35,8 @@
                   Command="{Binding AgregarCommand}" />
           <Button Content="Editar" Style="{StaticResource SecondaryButtonStyle}"
                   Command="{Binding EditarCommand}" />
+          <Button Content="Ver detalle" Style="{StaticResource SecondaryButtonStyle}"
+                  Command="{Binding VerDetalleCommand}" />
           <Button Content="Eliminar" Style="{StaticResource SecondaryButtonStyle}"
                   Foreground="{DynamicResource DangerTextBrush}"
                   Command="{Binding EliminarCommand}" />

@@ -53,6 +53,50 @@
       </Border>
     </controls:FormField>
 
+    <controls:FormField Etiqueta="Consumo de materiales por botella">
+      <StackPanel>
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                CornerRadius="{StaticResource RadSm}" Padding="8" MaxHeight="200">
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Consumos}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid Margin="0,4,0,4">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="110" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0" Style="{StaticResource FormComboBoxStyle}"
+                              Margin="0,0,8,0"
+                              ItemsSource="{Binding Articulos}"
+                              DisplayMemberPath="Etiqueta"
+                              SelectedItem="{Binding Articulo, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="1" Style="{StaticResource FormTextBoxStyle}"
+                             Margin="0,0,8,0"
+                             ToolTip="Unidades por botella procesada"
+                             Text="{Binding UnidadesPorBotella, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Grid.Column="2" Content="✕" Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding DataContext.QuitarConsumoCommand,
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Border>
+
+        <Button Content="Agregar material" Style="{StaticResource SecondaryButtonStyle}"
+                Margin="0,8,0,0" HorizontalAlignment="Left"
+                Command="{Binding AgregarConsumoCommand}" />
+
+        <TextBlock Text="Lo que gasta esta etapa por cada botella procesada (ej. una etiqueta por botella). Se descuenta solo al completar; no hace falta volver a indicarlo cada vez."
+                   FontSize="{StaticResource FsCaption}" TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" />
+      </StackPanel>
+    </controls:FormField>
+
     <controls:FormField Etiqueta="Notas">
       <TextBox Style="{StaticResource FormTextBoxStyle}"
                AcceptsReturn="True" MinLines="2" TextWrapping="Wrap"

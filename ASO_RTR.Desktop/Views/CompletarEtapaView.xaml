@@ -1,0 +1,106 @@
+<UserControl x:Class="ASO_RTR.Desktop.Views.CompletarEtapaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:ASO_RTR.Desktop.Controls"
+             mc:Ignorable="d"
+             d:DesignWidth="880">
+
+  <StackPanel>
+    <TextBlock Text="{Binding Descripcion}" FontSize="{StaticResource FsBody}" TextWrapping="Wrap"
+               Foreground="{DynamicResource TextSecondaryBrush}" />
+
+    <controls:FormField Etiqueta="Botellas procesadas" Margin="0,16,0,0">
+      <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+              CornerRadius="{StaticResource RadSm}" Padding="8" MaxHeight="160">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding Renglones}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid Margin="0,4,0,4">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="96" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Grid.Column="0" Text="{Binding EmpleadoNombre}"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                  <TextBox Grid.Column="1" Style="{StaticResource FormTextBoxStyle}"
+                           Text="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Merma (accidentes)" Margin="0,16,0,0">
+      <StackPanel>
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                CornerRadius="{StaticResource RadSm}" Padding="8" MaxHeight="240">
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Mermas}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid Margin="0,4,0,4">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="200" />
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="80" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0" Style="{StaticResource LineaComboBoxStyle}"
+                              Margin="0,0,8,0"
+                              ItemsSource="{Binding Empleados}"
+                              DisplayMemberPath="Nombre"
+                              SelectedItem="{Binding Empleado, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox Grid.Column="1" Style="{StaticResource LineaComboBoxStyle}"
+                              Margin="0,0,8,0"
+                              ItemsSource="{Binding Articulos}"
+                              DisplayMemberPath="Etiqueta"
+                              SelectedItem="{Binding Articulo, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="2" Style="{StaticResource FormTextBoxStyle}"
+                             Margin="0,0,8,0"
+                             Text="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Grid.Column="3" Content="✕" Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding DataContext.QuitarMermaCommand,
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Border>
+
+        <Button Content="Agregar línea de merma" Style="{StaticResource SecondaryButtonStyle}"
+                Margin="0,8,0,0" HorizontalAlignment="Left"
+                Command="{Binding AgregarMermaCommand}" />
+      </StackPanel>
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Se descontará automáticamente" Margin="0,16,0,0"
+                        Visibility="{Binding MuestraConsumoPreview, Converter={StaticResource BoolToVis}}">
+      <ItemsControl ItemsSource="{Binding ConsumoPreview}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding}" FontSize="{StaticResource FsCaption}"
+                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </controls:FormField>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+      <TextBlock Text="Merma total" VerticalAlignment="Center" Margin="0,0,12,0"
+                 Foreground="{DynamicResource TextSecondaryBrush}" />
+      <TextBlock Text="{Binding TotalMermaTexto}" Style="{StaticResource FormValorCalculadoStyle}" />
+
+      <TextBlock Text="Total procesado" VerticalAlignment="Center" Margin="24,0,12,0"
+                 Foreground="{DynamicResource TextSecondaryBrush}" />
+      <TextBlock Text="{Binding TotalProcesadoTexto}" Style="{StaticResource FormValorCalculadoStyle}" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

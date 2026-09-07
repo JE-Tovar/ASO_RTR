@@ -1,0 +1,101 @@
+<UserControl x:Class="ASO_RTR.Desktop.Views.EtapaDetalleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:ASO_RTR.Desktop.Controls"
+             mc:Ignorable="d"
+             d:DesignWidth="440">
+
+  <StackPanel>
+    <TextBlock Text="{Binding ProcesoEtiqueta}" FontSize="{StaticResource FsBody}"
+               FontWeight="{StaticResource FwMedium}" TextWrapping="Wrap"
+               Foreground="{DynamicResource TextPrimaryBrush}" />
+    <TextBlock Text="{Binding EstadoTexto}" FontSize="{StaticResource FsCaption}"
+               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0" />
+
+    <Grid Margin="0,16,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <StackPanel Grid.Column="0" Orientation="Horizontal">
+        <TextBlock Text="Total procesado" VerticalAlignment="Center" Margin="0,0,12,0"
+                   Foreground="{DynamicResource TextSecondaryBrush}" />
+        <TextBlock Text="{Binding CantidadProcesada}" Style="{StaticResource FormValorCalculadoStyle}" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="1" Orientation="Horizontal">
+        <TextBlock Text="Merma total" VerticalAlignment="Center" Margin="0,0,12,0"
+                   Foreground="{DynamicResource TextSecondaryBrush}" />
+        <TextBlock Text="{Binding MermaTotal}" Style="{StaticResource FormValorCalculadoStyle}" />
+      </StackPanel>
+    </Grid>
+
+    <TextBlock Margin="0,4,0,0" FontSize="{StaticResource FsCaption}"
+               Foreground="{DynamicResource TextMutedBrush}"
+               Visibility="{Binding MuestraSalidaConsumo, Converter={StaticResource BoolToVis}}">
+      <Run Text="Salida de consumo: " />
+      <Run Text="{Binding ConsumoSalidaNumero, Mode=OneWay}" FontWeight="{StaticResource FwMedium}" />
+    </TextBlock>
+
+    <TextBlock Margin="0,4,0,0" FontSize="{StaticResource FsCaption}"
+               Foreground="{DynamicResource TextMutedBrush}"
+               Visibility="{Binding MuestraSalidaMerma, Converter={StaticResource BoolToVis}}">
+      <Run Text="Salida de merma: " />
+      <Run Text="{Binding MermaSalidaNumero, Mode=OneWay}" FontWeight="{StaticResource FwMedium}" />
+    </TextBlock>
+
+    <controls:FormField Etiqueta="Consumo configurado por botella" Margin="0,20,0,0"
+                        Visibility="{Binding MuestraConsumos, Converter={StaticResource BoolToVis}}">
+      <ItemsControl ItemsSource="{Binding Consumos}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock FontSize="{StaticResource FsCaption}"
+                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0">
+              <Run Text="{Binding ArticuloNombre, Mode=OneWay}" />
+              <Run Text=" — " />
+              <Run Text="{Binding UnidadesPorBotella, Mode=OneWay}" />
+              <Run Text=" por botella" />
+            </TextBlock>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Desglose por empleado" Margin="0,20,0,0">
+      <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+              CornerRadius="{StaticResource RadSm}" Padding="8" MaxHeight="260">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding Detalle}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid Margin="0,4,0,4">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Grid.Column="0" Text="{Binding Nombre}"
+                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                  <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock FontSize="{StaticResource FsCaption}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Right">
+                      <Run Text="{Binding Cantidad, Mode=OneWay}" />
+                      <Run Text=" botellas" />
+                    </TextBlock>
+                    <TextBlock Text="{Binding MermaTexto}" FontSize="{StaticResource FsCaption}"
+                               Foreground="{DynamicResource DangerTextBrush}"
+                               HorizontalAlignment="Right"
+                               Visibility="{Binding TieneMerma, Converter={StaticResource BoolToVis}}" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+    </controls:FormField>
+  </StackPanel>
+</UserControl>

@@ -4,6 +4,7 @@ using ASO_RTR.Desktop.BD;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASO_RTR.Desktop.Migrations
 {
     [DbContext(typeof(AsoRtrDbContext))]
-    partial class AsoRtrDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260907211559_AgregarPatronDeEmpaqueATipoBotella")]
+    partial class AgregarPatronDeEmpaqueATipoBotella
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,11 +274,6 @@ namespace ASO_RTR.Desktop.Migrations
                     b.Property<int?>("CantidadProcesada")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConsumoSalidaNumero")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<int>("CreadoPorId")
                         .HasColumnType("int");
 
@@ -290,14 +288,6 @@ namespace ASO_RTR.Desktop.Migrations
 
                     b.Property<DateTime?>("FechaInicio")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("MermaSalidaNumero")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int?>("MermaTotal")
-                        .HasColumnType("int");
 
                     b.Property<string>("MotivoRechazo")
                         .HasMaxLength(500)
@@ -905,48 +895,6 @@ namespace ASO_RTR.Desktop.Migrations
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.Etapa", b =>
                 {
-                    b.OwnsMany("ASO_RTR.Desktop.Models.ConsumoEtapa", "Consumos", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("ArticuloCodigo")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
-
-                            b1.Property<int>("ArticuloId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ArticuloNombre")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)");
-
-                            b1.Property<int>("EtapaId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("UnidadTexto")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
-
-                            b1.Property<decimal>("UnidadesPorBotella")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("EtapaId");
-
-                            b1.ToTable("ConsumoEtapa");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EtapaId");
-                        });
-
                     b.OwnsMany("ASO_RTR.Desktop.Models.EtapaEmpleado", "Empleados", b1 =>
                         {
                             b1.Property<int>("Id")
@@ -979,51 +927,7 @@ namespace ASO_RTR.Desktop.Migrations
                                 .HasForeignKey("EtapaId");
                         });
 
-                    b.OwnsMany("ASO_RTR.Desktop.Models.MermaEtapa", "Mermas", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<int>("ArticuloId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ArticuloNombre")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)");
-
-                            b1.Property<int>("Cantidad")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("EmpleadoId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("EmpleadoNombre")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)");
-
-                            b1.Property<int>("EtapaId")
-                                .HasColumnType("int");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("EtapaId");
-
-                            b1.ToTable("MermaEtapa");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EtapaId");
-                        });
-
-                    b.Navigation("Consumos");
-
                     b.Navigation("Empleados");
-
-                    b.Navigation("Mermas");
                 });
 
             modelBuilder.Entity("ASO_RTR.Desktop.Models.FacturaProveedor", b =>

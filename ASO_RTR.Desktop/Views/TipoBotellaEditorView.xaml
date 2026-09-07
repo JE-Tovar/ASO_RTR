@@ -73,6 +73,105 @@
       </StackPanel>
     </Grid>
 
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="12" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <StackPanel Grid.Column="0">
+        <controls:FormField Etiqueta="Filas por nivel">
+          <TextBox Style="{StaticResource FormTextBoxStyle}"
+                   Text="{Binding FilasPorNivel, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+      </StackPanel>
+
+      <StackPanel Grid.Column="2">
+        <controls:FormField Etiqueta="Columnas por nivel">
+          <TextBox Style="{StaticResource FormTextBoxStyle}"
+                   Text="{Binding ColumnasPorNivel, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:FormField>
+      </StackPanel>
+    </Grid>
+
+    <controls:FormField Etiqueta="Patrón · niveles impares (1, 3, 5…)"
+                        Visibility="{Binding EsCaja, Converter={StaticResource BoolToVis}}">
+      <ItemsControl ItemsSource="{Binding PatronImpar.Filas}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <ItemsControl ItemsSource="{Binding Celdas}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <ToggleButton Style="{StaticResource CeldaOrientacionEditableStyle}"
+                                IsChecked="{Binding EsVertical}"
+                                ToolTip="Clic para alternar horizontal/vertical" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Patrón · niveles pares (2, 4, 6…)"
+                        Visibility="{Binding MuestraPatronPar, Converter={StaticResource BoolToVis}}">
+      <ItemsControl ItemsSource="{Binding PatronPar.Filas}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <ItemsControl ItemsSource="{Binding Celdas}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <ToggleButton Style="{StaticResource CeldaOrientacionEditableStyle}"
+                                IsChecked="{Binding EsVertical}"
+                                ToolTip="Clic para alternar horizontal/vertical" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </controls:FormField>
+
+    <controls:FormField Etiqueta="Panal de botellas por nivel"
+                        Visibility="{Binding MuestraPanal, Converter={StaticResource BoolToVis}}">
+      <Viewbox StretchDirection="DownOnly" MaxWidth="480" MaxHeight="260" HorizontalAlignment="Left">
+        <Canvas Width="{Binding Panal.Ancho}" Height="{Binding Panal.Alto}">
+          <ItemsControl ItemsSource="{Binding Panal.Circulos}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <Canvas />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <!-- Canvas.Left/Top van en el CONTENEDOR del ítem, no en un elemento dentro del
+                 DataTemplate: el Canvas solo posiciona a sus hijos directos, y ese hijo directo
+                 es el ContentPresenter que envuelve la plantilla, no el Ellipse de adentro. -->
+            <ItemsControl.ItemContainerStyle>
+              <Style TargetType="ContentPresenter">
+                <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                <Setter Property="Canvas.Top" Value="{Binding Top}" />
+              </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Ellipse Style="{StaticResource PanalCirculoStyle}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Canvas>
+      </Viewbox>
+    </controls:FormField>
+
     <CheckBox Content="Activo" Margin="0,16,0,0" Cursor="Hand"
               Foreground="{DynamicResource TextPrimaryBrush}"
               IsChecked="{Binding Activo}" />

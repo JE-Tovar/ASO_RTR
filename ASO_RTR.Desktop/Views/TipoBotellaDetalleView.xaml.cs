@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace ASO_RTR.Desktop.Views;
 
-public partial class CantidadEditorView : UserControl
+public partial class TipoBotellaDetalleView : UserControl
 {
-    public CantidadEditorView()
+    public TipoBotellaDetalleView()
     {
         InitializeComponent();
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using ASO_RTR.Desktop.Models;
 using ASO_RTR.Desktop.Services;
 
@@ -33,6 +34,8 @@ public sealed class TipoBotellaEditorViewModel : CrudEditorViewModelBase<TipoBot
         BotellasPorCaja = original.BotellasPorCaja == 0 ? string.Empty : original.BotellasPorCaja.ToString();
         UnidadesPorNivel = original.UnidadesPorNivel == 0 ? string.Empty : original.UnidadesPorNivel.ToString();
         Niveles = original.Niveles == 0 ? string.Empty : original.Niveles.ToString();
+        FilasPorNivel = original.FilasPorNivel == 0 ? string.Empty : original.FilasPorNivel.ToString();
+        ColumnasPorNivel = original.ColumnasPorNivel == 0 ? string.Empty : original.ColumnasPorNivel.ToString();
         Activo = original.Activo;
     }
 
@@ -70,7 +73,10 @@ public sealed class TipoBotellaEditorViewModel : CrudEditorViewModelBase<TipoBot
             if (SetProperty(ref _presentacionSeleccionada, value))
             {
                 OnPropertyChanged(nameof(EsCaja));
+                OnPropertyChanged(nameof(MuestraPanal));
                 OnPropertyChanged(nameof(EtiquetaUnidadesPorNivel));
+                OnPropertyChanged(nameof(MuestraPatronPar));
+                RegenerarPatrones();
             }
         }
     }
@@ -98,7 +104,64 @@ public sealed class TipoBotellaEditorViewModel : CrudEditorViewModelBase<TipoBot
     public string Niveles
     {
         get => _niveles;
-        set => SetProperty(ref _niveles, value);
+        set
+        {
+            if (SetProperty(ref _niveles, value))
+            {
+                OnPropertyChanged(nameof(MuestraPatronPar));
+                RegenerarPatrones();
+            }
+        }
+    }
+
+    private string _filasPorNivel = string.Empty;
+    public string FilasPorNivel
+    {
+        get => _filasPorNivel;
+        set { if (SetProperty(ref _filasPorNivel, value)) RegenerarPatrones(); }
+    }
+
+    private string _columnasPorNivel = string.Empty;
+    public string ColumnasPorNivel
+    {
+        get => _columnasPorNivel;
+        set { if (SetProperty(ref _columnasPorNivel, value)) RegenerarPatrones(); }
+    }
+
+    public PatronEmpaqueEditorViewModel PatronImpar { get; } = new();
+    public PatronEmpaqueEditorViewModel PatronPar { get; } = new();
+    public PanalPreviewViewModel Panal { get; } = new();
+
+    /// <summary>Con un solo nivel no hay alternancia: solo se captura el patrón impar (nivel 1).</summary>
+    public bool MuestraPatronPar => EsCaja && int.TryParse(Niveles, out var niveles) && niveles > 1;
+
+    /// <summary>A granel no hay orientación que marcar: solo la vista del panal de botellas.</summary>
+    public bool MuestraPanal => !EsCaja;
+
+    /// <summary>
+    /// Reconstruye la visualización (las dos matrices de cajas, o el panal a granel) cuando
+    /// cambian filas, columnas, niveles o presentación. Si filas/columnas todavía no son números
+    /// válidos, no hace nada — el usuario sigue escribiendo.
+    /// </summary>
+    private void RegenerarPatrones()
+    {
+        if (!int.TryParse(FilasPorNivel, out var filas) || filas <= 0)
+            return;
+
+        if (!int.TryParse(ColumnasPorNivel, out var columnas) || columnas <= 0)
+            return;
+
+        if (EsCaja)
+        {
+            PatronImpar.Regenerar(filas, columnas, _original.PatronParaNivel(1));
+
+            if (MuestraPatronPar)
+                PatronPar.Regenerar(filas, columnas, _original.PatronParaNivel(2));
+        }
+        else
+        {
+            Panal.Regenerar(filas, columnas);
+        }
     }
 
     private bool _activo = true;
@@ -146,6 +209,24 @@ public sealed class TipoBotellaEditorViewModel : CrudEditorViewModelBase<TipoBot
             return false;
         }
 
+        if (!int.TryParse(FilasPorNivel, out var filas) || filas <= 0)
+        {
+            error = "Indique un número de filas por nivel mayor a cero.";
+            return false;
+        }
+
+        if (!int.TryParse(ColumnasPorNivel, out var columnas) || columnas <= 0)
+        {
+            error = "Indique un número de columnas por nivel mayor a cero.";
+            return false;
+        }
+
+        if (filas * columnas != unidadesPorNivel)
+        {
+            error = $"Filas × columnas debe ser igual a {EtiquetaUnidadesPorNivel.ToLowerInvariant()}.";
+            return false;
+        }
+
         error = null;
         return true;
     }
@@ -160,6 +241,32 @@ public sealed class TipoBotellaEditorViewModel : CrudEditorViewModelBase<TipoBot
         tipoBotella.BotellasPorCaja = EsCaja && int.TryParse(BotellasPorCaja, out var botellasPorCaja) ? botellasPorCaja : 0;
         tipoBotella.UnidadesPorNivel = int.TryParse(UnidadesPorNivel, out var unidadesPorNivel) ? unidadesPorNivel : 0;
         tipoBotella.Niveles = int.TryParse(Niveles, out var niveles) ? niveles : 0;
+
+        tipoBotella.FilasPorNivel = int.TryParse(FilasPorNivel, out var filas) ? filas : 0;
+        tipoBotella.ColumnasPorNivel = int.TryParse(ColumnasPorNivel, out var columnas) ? columnas : 0;
+
+        tipoBotella.PatronEmpaque = EsCaja
+            ?
+            [
+                .. PatronImpar.Celdas.Select(c => new CeldaPatronEmpaque
+                {
+                    Patron = PatronNivel.Impar,
+                    Fila = c.Fila,
+                    Columna = c.Columna,
+                    Orientacion = c.Orientacion
+                }),
+                .. MuestraPatronPar
+                    ? PatronPar.Celdas.Select(c => new CeldaPatronEmpaque
+                    {
+                        Patron = PatronNivel.Par,
+                        Fila = c.Fila,
+                        Columna = c.Columna,
+                        Orientacion = c.Orientacion
+                    })
+                    : []
+            ]
+            : [];
+
         tipoBotella.Activo = Activo;
         return tipoBotella;
     }

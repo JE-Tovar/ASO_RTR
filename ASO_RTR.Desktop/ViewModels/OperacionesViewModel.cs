@@ -45,6 +45,7 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
     private readonly IEmpleadoDataSource _empleados;
     private readonly IServicioDialogo _dialogos;
     private readonly ISesionActual _sesionActual;
+    private readonly InventarioService _inventario;
     private readonly EtapaService _servicio;
 
     private string _filtroEstado = FiltroTodas;
@@ -60,7 +61,17 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
         _empleados = empleados;
         _dialogos = dialogos;
         _sesionActual = sesion;
-        _servicio = new EtapaService(etapas, sesion);
+
+        // La merma de una etapa dispara una salida real de almacén: Operaciones pasa a depender
+        // de Inventario por primera vez, mismo patrón que EntradasInventarioService con
+        // CuentasPorPagarService en Finanzas.
+        _inventario = new InventarioService(DataSourceFactory.CrearArticulos(),
+                                            DataSourceFactory.CrearEntradasInventario(),
+                                            DataSourceFactory.CrearSalidasInventario());
+        var salidasInventario = new SalidasInventarioService(
+            DataSourceFactory.CrearSalidasInventario(), _inventario, sesion);
+
+        _servicio = new EtapaService(etapas, salidasInventario, sesion);
 
         CambiarFiltroEstadoCommand = new RelayCommand<string>(filtro =>
         {
@@ -79,6 +90,10 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
 
         ReintentarCommand = new RelayCommand(Reintentar,
             () => SelectedItem is { } e && _servicio.PuedeReintentar(e) && _sesionActual.Puede(Permisos.Operaciones.Reintentar));
+
+        VerDetalleCommand = new RelayCommand(
+            () => _dialogos.MostrarEditor(new EtapaDetalleViewModel(SelectedItem!)),
+            () => SelectedItem is not null);
     }
 
     public ICommand CambiarFiltroEstadoCommand { get; }
@@ -86,6 +101,12 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
     public ICommand CompletarCommand { get; }
     public ICommand RechazarCommand { get; }
     public ICommand ReintentarCommand { get; }
+
+    /// <summary>
+    /// Solo lectura, así que no lleva permiso propio: quien ve el listado ya ve el mismo dato
+    /// resumido en la grilla; esto solo lo desglosa por empleado.
+    /// </summary>
+    public ICommand VerDetalleCommand { get; }
 
     protected override string ModuloPermiso => "Etapas";
 
@@ -115,24 +136,24 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
     };
 
     protected override CrudEditorViewModelBase<Etapa> CrearEditor(Etapa item) =>
-        new EtapaEditorViewModel(item, _procesos, _empleados, _servicio);
+        new EtapaEditorViewModel(item, _procesos, _empleados, _inventario.ActivosConExistencia(), _servicio);
 
     private void Iniciar() => Aplicar(() => _servicio.Iniciar(SelectedItem!));
 
+    /// <summary>
+    /// Un solo camino sin importar cuántos empleados tenga la etapa: la lista de procesadas, más
+    /// las líneas de merma que se hayan capturado (0 a N, cualquier empleado y artículo).
+    /// </summary>
     private void Completar()
     {
         if (SelectedItem is not { } etapa)
             return;
 
-        var editor = new CantidadEditorViewModel(
-            $"Completar etapa: {etapa.TipoTexto}",
-            $"{etapa.ProcesoEtiqueta} — {etapa.EmpleadosTexto}",
-            "Botellas procesadas exitosamente");
-
+        var editor = new CompletarEtapaViewModel(etapa, _inventario.ActivosConExistencia());
         if (!_dialogos.MostrarEditor(editor))
             return;
 
-        Aplicar(() => _servicio.Completar(etapa, editor.Valor));
+        Aplicar(() => _servicio.Completar(etapa, editor.ObtenerProcesados(), editor.ObtenerMermas()));
     }
 
     private void Reintentar() => Aplicar(() => _servicio.Reintentar(SelectedItem!));

@@ -378,6 +378,13 @@ public class AsoRtrDbContext : DbContext
             entity.Ignore(t => t.BotellasPorPaleta);
             entity.Ignore(t => t.EstadoTexto);
             entity.Ignore(t => t.Etiqueta);
+
+            entity.OwnsMany(t => t.PatronEmpaque, celda =>
+            {
+                celda.WithOwner().HasForeignKey("TipoBotellaId");
+                celda.Property<int>("Id");
+                celda.HasKey("Id");
+            });
         });
 
         modelBuilder.Entity<Etapa>(entity =>
@@ -386,6 +393,8 @@ public class AsoRtrDbContext : DbContext
             entity.Property(e => e.ProcesoEtiqueta).HasMaxLength(150);
             entity.Property(e => e.MotivoRechazo).HasMaxLength(500);
             entity.Property(e => e.Notas).HasMaxLength(500);
+            entity.Property(e => e.MermaSalidaNumero).HasMaxLength(20);
+            entity.Property(e => e.ConsumoSalidaNumero).HasMaxLength(20);
 
             entity.Ignore(e => e.TipoTexto);
             entity.Ignore(e => e.EstadoTexto);
@@ -397,6 +406,26 @@ public class AsoRtrDbContext : DbContext
                 empleado.Property<int>("Id");
                 empleado.HasKey("Id");
                 empleado.Property(x => x.EmpleadoNombre).HasMaxLength(150);
+            });
+
+            entity.OwnsMany(e => e.Consumos, consumo =>
+            {
+                consumo.WithOwner().HasForeignKey("EtapaId");
+                consumo.Property<int>("Id");
+                consumo.HasKey("Id");
+                consumo.Property(x => x.ArticuloCodigo).HasMaxLength(20);
+                consumo.Property(x => x.ArticuloNombre).HasMaxLength(150);
+                consumo.Property(x => x.UnidadTexto).HasMaxLength(20);
+                consumo.Property(x => x.UnidadesPorBotella).HasColumnType("decimal(18,2)");
+            });
+
+            entity.OwnsMany(e => e.Mermas, merma =>
+            {
+                merma.WithOwner().HasForeignKey("EtapaId");
+                merma.Property<int>("Id");
+                merma.HasKey("Id");
+                merma.Property(x => x.EmpleadoNombre).HasMaxLength(150);
+                merma.Property(x => x.ArticuloNombre).HasMaxLength(150);
             });
         });
 

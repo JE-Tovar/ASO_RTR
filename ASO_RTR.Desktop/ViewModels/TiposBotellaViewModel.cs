@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Input;
 using ASO_RTR.Desktop.Configuration;
 using ASO_RTR.Desktop.Models;
 using ASO_RTR.Desktop.Navigation;
@@ -13,6 +14,7 @@ namespace ASO_RTR.Desktop.ViewModels;
 public sealed class TiposBotellaViewModel : PantallaCrudViewModel<TipoBotella, int>
 {
     private readonly ITipoBotellaDataSource _tiposBotella;
+    private readonly IServicioDialogo _dialogos;
 
     public TiposBotellaViewModel(Modulo modulo, Submodulo submodulo)
         : this(modulo, submodulo, DataSourceFactory.CrearTiposBotella(), new ServicioDialogo(), SesionActual.Instancia)
@@ -27,7 +29,18 @@ public sealed class TiposBotellaViewModel : PantallaCrudViewModel<TipoBotella, i
         : base(modulo, submodulo, tiposBotella, dialogos, sesion)
     {
         _tiposBotella = tiposBotella;
+        _dialogos = dialogos;
+
+        VerDetalleCommand = new RelayCommand(
+            () => _dialogos.MostrarEditor(new TipoBotellaDetalleViewModel(SelectedItem!)),
+            () => SelectedItem is not null);
     }
+
+    /// <summary>
+    /// Solo lectura, así que no lleva permiso propio: quien ve el listado (Ver.Catalogo.TiposBotella)
+    /// ya ve el mismo dato resumido en la grilla; esto solo lo desglosa por nivel.
+    /// </summary>
+    public ICommand VerDetalleCommand { get; }
 
     protected override string ModuloPermiso => "TiposBotella";
 

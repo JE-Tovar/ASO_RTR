@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using ASO_RTR.Desktop.Models;
 using ASO_RTR.Desktop.Services;
 
@@ -28,6 +30,30 @@ public sealed class EmpleadoSeleccionable : ViewModelBase
 }
 
 /// <summary>
+/// Una línea de "consumo de materiales por botella": qué artículo y cuántas unidades gasta la
+/// etapa por cada botella procesada. Se agrega/quita dinámicamente, igual que las líneas de
+/// <see cref="EntradaEditorViewModel"/>.
+/// </summary>
+public sealed class ConsumoLineaViewModel(IReadOnlyList<Articulo> articulos) : ViewModelBase
+{
+    public IReadOnlyList<Articulo> Articulos { get; } = articulos;
+
+    private Articulo? _articulo;
+    public Articulo? Articulo
+    {
+        get => _articulo;
+        set => SetProperty(ref _articulo, value);
+    }
+
+    private string _unidadesPorBotella = string.Empty;
+    public string UnidadesPorBotella
+    {
+        get => _unidadesPorBotella;
+        set => SetProperty(ref _unidadesPorBotella, value);
+    }
+}
+
+/// <summary>
 /// Alta/edición de una etapa: a qué proceso pertenece, de qué tipo es, y quiénes la ejecutaron.
 /// La validación de fondo (proceso obligatorio, al menos un empleado) la hace
 /// <see cref="EtapaService"/>: el editor se la pide y muestra el mensaje que devuelva.
@@ -43,6 +69,7 @@ public sealed class EtapaEditorViewModel : CrudEditorViewModelBase<Etapa>
     public EtapaEditorViewModel(Etapa original,
                                 IProcesoDataSource procesos,
                                 IEmpleadoDataSource empleados,
+                                IReadOnlyList<Articulo> articulos,
                                 EtapaService servicio)
     {
         _original = original;
@@ -69,7 +96,28 @@ public sealed class EtapaEditorViewModel : CrudEditorViewModelBase<Etapa>
             .ToList();
 
         Notas = original.Notas;
+
+        Consumos =
+        [
+            .. original.Consumos.Select(c => new ConsumoLineaViewModel(articulos)
+            {
+                Articulo = articulos.FirstOrDefault(a => a.Id == c.ArticuloId),
+                UnidadesPorBotella = c.UnidadesPorBotella.ToString()
+            })
+        ];
+
+        AgregarConsumoCommand = new RelayCommand(() => Consumos.Add(new ConsumoLineaViewModel(articulos)));
+        QuitarConsumoCommand = new RelayCommand<ConsumoLineaViewModel>(linea =>
+        {
+            if (linea is not null)
+                Consumos.Remove(linea);
+        });
     }
+
+    public ObservableCollection<ConsumoLineaViewModel> Consumos { get; }
+
+    public ICommand AgregarConsumoCommand { get; }
+    public ICommand QuitarConsumoCommand { get; }
 
     public override string Titulo => _original.Id == 0 ? "Nueva etapa" : $"Editar etapa Nº {_original.Id}";
 
@@ -118,6 +166,22 @@ public sealed class EtapaEditorViewModel : CrudEditorViewModelBase<Etapa>
             .Where(e => e.Seleccionado)
             .Select(e => new EtapaEmpleado { EmpleadoId = e.Empleado.Id, EmpleadoNombre = e.Empleado.NombreCompleto })
             .ToList();
+
+        // Las líneas en blanco no se mandan: una fila vacía al final es lo normal mientras se
+        // arma la lista, y no tiene por qué impedir guardar.
+        etapa.Consumos =
+        [
+            .. Consumos
+                .Where(c => c.Articulo is not null)
+                .Select(c => new ConsumoEtapa
+                {
+                    ArticuloId = c.Articulo!.Id,
+                    ArticuloCodigo = c.Articulo.Codigo,
+                    ArticuloNombre = c.Articulo.Nombre,
+                    UnidadTexto = c.Articulo.UnidadCorta,
+                    UnidadesPorBotella = decimal.TryParse(c.UnidadesPorBotella, out var v) ? v : 0
+                })
+        ];
 
         return etapa;
     }

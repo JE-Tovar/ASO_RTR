@@ -126,6 +126,8 @@
                     Command="{Binding IniciarCommand}" />
             <Button Content="Completar" Style="{StaticResource SecondaryButtonStyle}"
                     Command="{Binding CompletarCommand}" />
+            <Button Content="Ver detalle" Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding VerDetalleCommand}" />
             <Button Content="Rechazar" Style="{StaticResource SecondaryButtonStyle}"
                     Foreground="{DynamicResource DangerTextBrush}"
                     Command="{Binding RechazarCommand}" />
@@ -158,6 +160,7 @@
               <controls:ColumnaTexto Header="Fin" Width="11*" MinWidth="78"
                                      Binding="{Binding FechaFin, StringFormat={}{0:dd/MM/yyyy}}" />
               <controls:ColumnaNumero Header="Procesadas" Binding="{Binding CantidadProcesada}" Width="10*" MinWidth="80" />
+              <controls:ColumnaNumero Header="Merma" Binding="{Binding MermaTotal}" Width="8*" MinWidth="70" />
               <DataGridTemplateColumn Header="Estado" Width="100">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>

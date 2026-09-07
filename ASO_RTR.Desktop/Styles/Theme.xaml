@@ -930,6 +930,69 @@
     </Setter>
   </Style>
 
+  <!-- Celda de la matriz de paletizado (Catálogo · Tipos de Botella): un rectángulo que
+       intercambia ancho/alto según la orientación de la caja, en vez de rotar un transform —
+       más simple y evita animar un brush (regla 3 del sistema visual). Marcada = vertical. -->
+  <Style x:Key="CeldaOrientacionEditableStyle" TargetType="ToggleButton">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="26" />
+    <Setter Property="Margin" Value="2" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ToggleButton">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="1"
+                  CornerRadius="{StaticResource RadSm}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsChecked" Value="True">
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryButtonBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonBrush}" />
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="{DynamicResource ToggleHoverBrush}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <!-- Botella a granel dentro del panal (Catálogo · Tipos de Botella): un círculo neutro, igual
+       en el editor y en "Ver detalle" — no hay estado que marcar, es solo la disposición. -->
+  <Style x:Key="PanalCirculoStyle" TargetType="Ellipse">
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="Fill" Value="{DynamicResource SurfaceBrush}" />
+    <Setter Property="Stroke" Value="{DynamicResource BorderBrush}" />
+    <Setter Property="StrokeThickness" Value="1" />
+  </Style>
+
+  <!-- Misma celda, de solo lectura para "Ver detalle": el DataContext de cada celda es
+       directamente el bool "EsVertical", no un ViewModel con propiedad. -->
+  <Style x:Key="CeldaOrientacionStyle" TargetType="Border">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="26" />
+    <Setter Property="Margin" Value="2" />
+    <Setter Property="CornerRadius" Value="{StaticResource RadSm}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding}" Value="True">
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryButtonBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonBrush}" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
   <!-- Alerta de proceso -->
   <Style x:Key="AlertBoxStyle" TargetType="Border">
     <Setter Property="CornerRadius" Value="{StaticResource RadMd}" />
