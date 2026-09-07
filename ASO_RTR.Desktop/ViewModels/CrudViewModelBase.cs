@@ -94,7 +94,12 @@ public abstract class CrudViewModelBase<T, TId> : ViewModelBase where T : IEntid
     // mano duplicaría las filas — la fila entraría una vez por Items.Add y otra por la recarga.
     // Lo único que se conserva es a QUIÉN dejar seleccionado después.
 
-    private void Agregar()
+    /// <summary>
+    /// Da de alta directo contra la fuente. Las pantallas cuyo documento tiene servicio de
+    /// dominio lo redefinen para pasar por él: aquí no hay validación de negocio ni se dispara
+    /// nada de lo que el alta arrastre en otros módulos.
+    /// </summary>
+    protected virtual void Agregar()
     {
         var editor = CrearEditor(CrearNuevo());
         if (!_dialogo.MostrarEditor(editor))

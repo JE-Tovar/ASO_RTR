@@ -24,6 +24,9 @@ public static class DataSourceFactory
     private static IUsuarioDataSource? _usuarios;
     private static IPermisoUsuarioDataSource? _permisosUsuario;
     private static IPeticionCambioDataSource? _peticiones;
+    private static IArticuloDataSource? _articulos;
+    private static IEntradaInventarioDataSource? _entradasInventario;
+    private static ISalidaInventarioDataSource? _salidasInventario;
     private static IAuthService? _auth;
     private static IAjustesStore? _ajustesStore;
 
@@ -50,6 +53,15 @@ public static class DataSourceFactory
 
     public static IPeticionCambioDataSource CrearPeticiones() =>
         _peticiones ??= new SqlPeticionCambioDataSource();
+
+    public static IArticuloDataSource CrearArticulos() =>
+        _articulos ??= new SqlArticuloDataSource();
+
+    public static IEntradaInventarioDataSource CrearEntradasInventario() =>
+        _entradasInventario ??= new SqlEntradaInventarioDataSource();
+
+    public static ISalidaInventarioDataSource CrearSalidasInventario() =>
+        _salidasInventario ??= new SqlSalidaInventarioDataSource();
 
     public static IAuthService CrearAuth() =>
         _auth ??= new AuthService(CrearUsuarios());

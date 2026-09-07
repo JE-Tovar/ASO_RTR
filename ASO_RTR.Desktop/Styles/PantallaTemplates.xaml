@@ -19,6 +19,20 @@
     <views:CuentasPorPagarView />
   </DataTemplate>
 
+  <!-- Inventario · Almacén, Entradas y Salidas -->
+
+  <DataTemplate DataType="{x:Type vm:AlmacenViewModel}">
+    <views:AlmacenView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:EntradasViewModel}">
+    <views:EntradasView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:SalidasViewModel}">
+    <views:SalidasView />
+  </DataTemplate>
+
   <!-- Armazón -->
 
   <DataTemplate DataType="{x:Type vm:AdministracionViewModel}">

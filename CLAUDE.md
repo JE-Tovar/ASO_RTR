@@ -1,4 +1,4 @@
-﻿# ASO RTR — Software ASO RTR (Control de Calidad, Limpieza, Empacado y Etiquetado de Botellas)
+# ASO RTR — Software ASO RTR (Control de Calidad, Limpieza, Empacado y Etiquetado de Botellas)
 
 Sistema de gestión para una empresa de logística de **control de calidad, limpieza, empacado y
 etiquetado de botellas de vidrio** de bebidas alcohólicas. Aplicación de escritorio **WPF · .NET
@@ -61,9 +61,10 @@ F5 en Visual Studio (`ASO_RTR.slnx`).
 
 ## Estructura de módulos
 
-Hoy hay **un solo módulo de negocio, Finanzas**, con dos submódulos (Cuentas por Pagar y Banco),
-más **cuatro módulos fijados** sin submódulos: **Inicio**, **Peticiones** (bandeja de solicitudes
-de cambio), **Administración** (usuarios con sus permisos, y los datos de la propia
+Hoy hay **dos módulos de negocio**: **Finanzas** (Cuentas por Pagar y Banco — el ejemplo
+conservado del scaffold) e **Inventario** (Almacén, Entradas y Salidas — el primero construido
+para esta planta), más **cuatro módulos fijados** sin submódulos: **Inicio**, **Peticiones**
+(bandeja de solicitudes de cambio), **Administración** (usuarios con sus permisos, y los datos de la propia
 organización) y **Configuración** (apariencia, cuenta propia, preferencias de la máquina — anclada
 al pie del sidebar, fuera de su `ScrollViewer`, porque no es trabajo del día).
 
@@ -74,7 +75,7 @@ al pie del sidebar, fuera de su `ScrollViewer`, porque no es trabajo del día).
 - `Views/InicioView` — lanzador con una tarjeta por módulo.
 - `Views/ModuloDashboardView` — resumen del módulo: indicadores + tarjeta por submódulo. Los
   valores los calcula `ModuloDashboardViewModel.CalcularIndicadores` (un `switch` por clave de
-  módulo) — hoy solo tiene el caso `"Finanzas"`.
+  módulo) — hoy con los casos `"Finanzas"` e `"Inventario"`.
 - `Views/SubmoduloView` — submódulo en construcción, para cuando se agregue uno nuevo al catálogo
   antes de tener su pantalla real.
 - Framework CRUD reutilizable (`CrudViewModelBase`, `CrudEditorViewModelBase`, `CrudEditorWindow`,
@@ -115,13 +116,68 @@ Arquetipo a copiar (el único que sobrevivió): **Finanzas · Cuentas por Pagar*
 `Services/CuentasPorPagarService.cs` (documento con máquina de estados),
 `ViewModels/CuentasPorPagarViewModel.cs` (contenedor de dos padrones).
 
+## Inventario (2026-09-06)
+
+Primer módulo construido para esta planta, no heredado del scaffold. Tres submódulos: **Almacén**
+(catálogo de artículos con su existencia), **Entradas** (lo que llega) y **Salidas** (boletos de
+salida). Las decisiones que no se deducen del código:
+
+- **La existencia NO se guarda: se deriva.** `Articulo` no tiene columna de existencia;
+  `InventarioService.ExistenciasPorArticulo()` la calcula como Σ líneas de entradas − Σ líneas de
+  salidas, sin contar documentos anulados. `Articulo.Existencia` es una propiedad `Ignore()`-ada
+  que rellena el servicio antes de pintar, igual que `CuentaBancaria.SaldoActual`. Se eligió así
+  porque un número editable a mano se desincroniza del historial y no deja rastro de por qué
+  cambió; el precio a pagar es que **hay que refrescar la vista a mano** tras rellenarla, porque
+  los modelos no notifican cambios (ver `AlmacenViewModel.Recargar`). El cálculo es una pasada por
+  cada tabla sobre un diccionario, no una consulta por artículo.
+- **El stock inicial se carga con una entrada de tipo `Ajuste`**, que es el único tipo que no
+  genera cuenta por pagar. Un ajuste negativo es una salida con motivo `Merma` o `Traslado`; no
+  hay entradas con cantidad negativa.
+- **Registrar una entrada de compra crea su cuenta por pagar en Finanzas**, y la dependencia no es
+  opcional: `EntradasInventarioService` exige `CuentasPorPagarService` por constructor, igual que
+  éste exige `BancoService`. La factura se escribe **antes** que la entrada, por el mismo motivo
+  que el asiento de banco va antes de marcar una factura pagada: es la operación que puede
+  rechazar. Si aun así la entrada fallara al guardarse, se retira la factura recién creada — no
+  hay transacción que abarque las dos tablas, porque cada fuente de datos abre su propio contexto.
+- **El anti-duplicado ya existía**: `CuentasPorPagarService.Validar` rechaza un número de documento
+  repetido para el mismo proveedor, que es exactamente el caso "la misma factura se cargó dos
+  veces". No hizo falta un `GetByOrigen` como el de Banco.
+- **Las líneas de `FacturaProveedor` por fin se usan.** Estaban en el modelo desde el scaffold pero
+  ningún editor las llenaba; ahora las llena la entrada de almacén con lo que se compró.
+- **El comercio de una compra externa entra al padrón de proveedores** (se busca por nombre, se da
+  de alta solo si no estaba), porque la deuda tiene que quedar a nombre de alguien y así se paga
+  por el camino de siempre. Riesgo conocido: un nombre mal escrito crea un proveedor duplicado.
+- **Anular una entrada** exige dos cosas, comprobadas antes de escribir nada: que el almacén no
+  quede en negativo, y que su factura no esté ya pagada (eso se deshace con una nota de crédito).
+  Anular una salida no exige nada: la existencia vuelve sola porque el kardex ignora lo anulado.
+- **Los correlativos** (`ENT-000123`, `SAL-000123`) los asigna el servicio al registrar, con
+  "el último + 1", y el índice único `(OrganizacionId, Numero)` es la red por si dos puestos
+  coincidieran. Se persisten, no se derivan del `Id`, porque la descripción de la cuenta por pagar
+  cita el número de la entrada y hace falta antes de insertar.
+- **Quién autoriza un boleto no es un campo del formulario**: lo estampa el servicio con el usuario
+  de la sesión, para que no se pueda escribir otro nombre en el papel.
+- **`Agregar()` de `CrudViewModelBase` pasó a `protected virtual`** (`Editar` y `Eliminar` ya lo
+  eran, por este mismo motivo): Entradas y Salidas lo redefinen para que el alta pase por el
+  servicio de dominio y no escriba directo contra la fuente de datos.
+- **La grilla de líneas editable se diseñó aquí**; no había ninguna en el repo. Las líneas del
+  editor son ViewModels propios (`LineaEntradaEditorViewModel`, `LineaSalidaEditorViewModel`) y no
+  los modelos, porque el subtotal y el total del pie tienen que moverse según se teclea. Van en un
+  `DataGrid` con `IsReadOnly="True"` y controles vivos dentro de `DataGridTemplateColumn`, que es
+  más manejable que el modo de edición del `DataGrid`.
+- **`Controls/PuenteDeDatos.cs`** es nuevo y genérico: las columnas de un `DataGrid` no están en el
+  árbol visual y no heredan `DataContext`, así que un `Binding` puesto en una columna falla en
+  silencio. Lo usan las dos grillas de líneas para ocultar la columna de precios en un ajuste y
+  para llegar al comando de quitar línea.
+
 ## Persistencia
 
 Las entidades de dominio persisten en **SQL Server vía EF Core Migrations**.
 
 - **Migraciones** en `ASO_RTR.Desktop/Migrations/`, empezando en `Baseline` (generada contra el
   modelo recortado: `Organizacion`, `Usuario`, `PermisoUsuario`, `PeticionCambio`, `Proveedor`,
-  `FacturaProveedor`+`FacturaProveedorLinea`, `CuentaBancaria`, `MovimientoBanco`).
+  `FacturaProveedor`+`FacturaProveedorLinea`, `CuentaBancaria`, `MovimientoBanco`) y seguida de
+  `Inventario` (`Articulo`, `EntradaInventario`+`EntradaInventarioLinea`,
+  `SalidaInventario`+`SalidaInventarioLinea`).
 - **La cadena de conexión vive solo en `appsettings.local.json`** (por máquina, en `.gitignore`);
   la de `appsettings.json` (clave `ConnectionStrings:AsoRtrDb`) apunta a LocalDB con un `.mdf` en
   `App_Data`.
@@ -158,8 +214,8 @@ Cuatro roles genéricos (`Models/Rol.cs`), cada uno con un conjunto base en
 
 | Rol | Alcance |
 |---|---|
-| **Operador** | El día a día en Finanzas: crea/edita proveedores y facturas de proveedor. No mueve dinero ni borra nada |
-| **Supervisor** | Todo lo de Operador, más registrar pagos (dispara el asiento en Banco), administrar cuentas bancarias, eliminar, y resolver peticiones de su dominio |
+| **Operador** | El día a día: crea/edita proveedores y facturas; mantiene el catálogo de artículos y registra entradas y salidas de almacén. No mueve dinero, no anula ni borra nada |
+| **Supervisor** | Todo lo de Operador, más registrar pagos (dispara el asiento en Banco), administrar cuentas bancarias, anular documentos de almacén, eliminar, y resolver peticiones de su dominio |
 | **AdministradorOrganizacion** | Todo dentro de la organización, salvo crear usuarios Desarrollador |
 | **Desarrollador** | Todos los permisos, y es el único que reparte su propio rol |
 
@@ -228,21 +284,25 @@ deliberados, fáciles de revisar y cambiar; no son bugs:
    prefigurado en el modelo de datos actual.
 4. **Nombre de la empresa / razón social**: el `.csproj` usa "ASO RTR" como placeholder en
    `Company`/`Description`.
-5. **Módulos de negocio reales**: control de calidad, limpieza, empacado, etiquetado y cualquier
-   otro proceso de la planta están sin construir. Usar la receta de "Cómo se agrega un
-   submódulo" de más arriba, y el paquete de Cuentas por Pagar como referencia de los cuatro
-   patrones (CRUD simple, contenedor de dos padrones, documento con líneas, documento con
-   máquina de estados).
+5. **Módulos de producción**: control de calidad, limpieza, empacado y etiquetado siguen sin
+   construir (Inventario, que es transversal a todos ellos, ya está). Usar la receta de "Cómo se
+   agrega un submódulo" de más arriba; como referencia, el paquete de Cuentas por Pagar para los
+   cuatro patrones del scaffold, e Inventario para un módulo construido de cero contra este
+   armazón (kardex derivado, documento con líneas editables, acoplamiento entre módulos).
+   Cuando aparezcan, revisar si `AreaDestino` (la lista de procesos a los que el almacén
+   despacha) sigue coincidiendo con los procesos reales.
 6. **`Solicitables` vacío**: no hay ninguna petición de cambio configurada todavía — ver
-   "Peticiones de cambio" arriba.
+   "Peticiones de cambio" arriba. Los dos candidatos naturales ya existen:
+   `EntradasInventario.Anular` y `SalidasInventario.Anular`, que hoy un Operador simplemente no
+   ve.
 7. **Pantalla de datos de la organización**: `Administración · Organización` (antes "Datos del
    Núcleo" en ASO) solo pide nombre y código; si el negocio real necesita más datos de la
    organización (dirección, RIF, etc.), agregarlos ahí.
 
 ## Próximo paso sugerido
 
-1. **Definir con el cliente los módulos reales** (control de calidad, limpieza, empacado,
-   etiquetado) y construir el primero copiando el arquetipo de Cuentas por Pagar.
+1. **Definir con el cliente los módulos de producción** (control de calidad, limpieza, empacado,
+   etiquetado) y construir el primero; Inventario ya deja el almacén del que tirarán todos.
 2. **Decidir los roles reales** de la planta y reemplazar los cuatro genéricos.
 3. **Elegir el color de marca** y actualizar `Colors.xaml`/`ColorsOscuro.xaml`.
 4. **Llevar la comprobación de permisos a los servicios de dominio** de cada módulo nuevo desde

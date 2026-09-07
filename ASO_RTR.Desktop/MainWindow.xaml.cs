@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -158,6 +158,10 @@ public partial class MainWindow : Window
         {
             ["Finanzas.CuentasPorPagar"] = (m, s) => new CuentasPorPagarViewModel(m, s),
             ["Finanzas.Banco"] = (m, s) => new BancoViewModel(m, s),
+
+            ["Inventario.Almacen"] = (m, s) => new AlmacenViewModel(m, s),
+            ["Inventario.Entradas"] = (m, s) => new EntradasViewModel(m, s),
+            ["Inventario.Salidas"] = (m, s) => new SalidasViewModel(m, s),
         };
 
     private object CrearVistaModulo(Modulo modulo)

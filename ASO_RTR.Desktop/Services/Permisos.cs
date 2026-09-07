@@ -69,6 +69,31 @@ public static class Permisos
         public const string Eliminar = "CuentasBancarias.Eliminar";
     }
 
+    /// <summary>Catálogo de artículos del almacén (Inventario · Almacén).</summary>
+    public static class Articulos
+    {
+        public const string Crear = "Articulos.Crear";
+        public const string Editar = "Articulos.Editar";
+        public const string Eliminar = "Articulos.Eliminar";
+    }
+
+    /// <summary>
+    /// Entradas al almacén. No hay "Editar" ni "Eliminar": una entrada es un documento, y un
+    /// documento no se corrige ni se borra, se anula (ver <c>EntradasInventarioService</c>).
+    /// </summary>
+    public static class EntradasInventario
+    {
+        public const string Crear = "EntradasInventario.Crear";
+        public const string Anular = "EntradasInventario.Anular";
+    }
+
+    /// <summary>Boletos de salida del almacén. Mismo criterio que las entradas.</summary>
+    public static class SalidasInventario
+    {
+        public const string Crear = "SalidasInventario.Crear";
+        public const string Anular = "SalidasInventario.Anular";
+    }
+
     public static class Peticiones
     {
         public const string Solicitar = "Peticiones.Solicitar";

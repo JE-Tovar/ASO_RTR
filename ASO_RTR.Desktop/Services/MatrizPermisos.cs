@@ -71,11 +71,24 @@ public static class MatrizPermisos
         Permisos.FacturasProveedor.Crear,
         Permisos.FacturasProveedor.Editar,
 
+        Permisos.Ver("Inventario.Almacen"),
+        Permisos.Ver("Inventario.Entradas"),
+        Permisos.Ver("Inventario.Salidas"),
+
+        Permisos.Articulos.Crear,
+        Permisos.Articulos.Editar,
+
+        Permisos.EntradasInventario.Crear,
+        Permisos.SalidasInventario.Crear,
+
         Permisos.Peticiones.Solicitar
 
         // Fuera a propósito:
         // - Finanzas.Pagar / Banco.*: mover dinero es de Supervisor.
         // - Proveedores.Eliminar / FacturasProveedor.Eliminar: borrar es de Supervisor.
+        // - EntradasInventario.Anular / SalidasInventario.Anular: deshacer un documento del
+        //   almacén es de Supervisor, igual que deshacer uno de Finanzas.
+        // - Articulos.Eliminar: depurar el catálogo es de Supervisor.
     ];
 
     /// <summary>
@@ -100,6 +113,11 @@ public static class MatrizPermisos
 
             Permisos.CuentasBancarias.Crear,
             Permisos.CuentasBancarias.Editar,
+
+            Permisos.Articulos.Eliminar,
+
+            Permisos.EntradasInventario.Anular,
+            Permisos.SalidasInventario.Anular,
 
             Permisos.Peticiones.Resolver
 

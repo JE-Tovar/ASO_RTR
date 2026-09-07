@@ -22,6 +22,11 @@ public class AsoRtrDbContext : DbContext
     public DbSet<CuentaBancaria> CuentasBancarias { get; set; }
     public DbSet<MovimientoBanco> MovimientosBanco { get; set; }
 
+    // ---- Inventario: almacén, entradas y salidas ----
+    public DbSet<Articulo> Articulos { get; set; }
+    public DbSet<EntradaInventario> EntradasInventario { get; set; }
+    public DbSet<SalidaInventario> SalidasInventario { get; set; }
+
     /// <summary>
     /// Organización sobre la que trabaja ESTE contexto. Se toma del ámbito al construirlo y no
     /// cambia después: cada método de las fuentes Sql abre su propio contexto, así que un cambio
@@ -208,6 +213,120 @@ public class AsoRtrDbContext : DbContext
             entity.Ignore(m => m.OrigenTexto);
             entity.Ignore(m => m.DocumentoTexto);
             entity.Ignore(m => m.ConciliacionTexto);
+        });
+
+        // ---- Inventario ----
+
+        modelBuilder.Entity<Articulo>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Codigo).IsRequired().HasMaxLength(20);
+            entity.Property(a => a.Nombre).IsRequired().HasMaxLength(150);
+            entity.Property(a => a.Categoria).HasMaxLength(60);
+            entity.Property(a => a.Ubicacion).HasMaxLength(60);
+            entity.Property(a => a.Notas).HasMaxLength(500);
+            entity.Property(a => a.Minimo).HasColumnType("decimal(18,2)").IsRequired();
+
+            // Respalda el código aleatorio: si dos altas simultáneas generan el mismo candidato,
+            // la segunda choca contra el índice en vez de duplicar el artículo.
+            entity.HasIndex(a => new { a.OrganizacionId, a.Codigo }).IsUnique();
+
+            // Existencia NO se persiste: es la suma del kardex, la rellena InventarioService.
+            entity.Ignore(a => a.Existencia);
+            entity.Ignore(a => a.BajoMinimo);
+            entity.Ignore(a => a.SinExistencia);
+            entity.Ignore(a => a.EstadoTexto);
+            entity.Ignore(a => a.UnidadTexto);
+            entity.Ignore(a => a.UnidadCorta);
+            entity.Ignore(a => a.ExistenciaTexto);
+            entity.Ignore(a => a.MinimoTexto);
+            entity.Ignore(a => a.Etiqueta);
+        });
+
+        modelBuilder.Entity<EntradaInventario>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Numero).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.ProveedorNombre).HasMaxLength(150);
+            entity.Property(e => e.NumeroDocumento).HasMaxLength(50);
+            entity.Property(e => e.CompradoPor).HasMaxLength(150);
+            entity.Property(e => e.Observaciones).HasMaxLength(500);
+            entity.Property(e => e.FacturaProveedorNumero).HasMaxLength(50);
+            entity.Property(e => e.MotivoAnulacion).HasMaxLength(500);
+            entity.Property(e => e.CreadoPorNombre).HasMaxLength(150);
+            entity.Property(e => e.Total).HasColumnType("decimal(18,2)").IsRequired();
+
+            // El correlativo se calcula como "el último + 1" antes de escribir; este índice es
+            // la red que convierte una carrera entre dos puestos en un error, no en un duplicado.
+            entity.HasIndex(e => new { e.OrganizacionId, e.Numero }).IsUnique();
+
+            // El camino inverso del enlace a Finanzas: qué entrada originó una cuenta por pagar.
+            entity.HasIndex(e => e.FacturaProveedorId);
+
+            entity.Ignore(e => e.GeneraCuentaPorPagar);
+            entity.Ignore(e => e.CuentaEnKardex);
+            entity.Ignore(e => e.TipoTexto);
+            entity.Ignore(e => e.EstadoTexto);
+            entity.Ignore(e => e.OrigenTexto);
+            entity.Ignore(e => e.TotalTexto);
+            entity.Ignore(e => e.FechaTexto);
+            entity.Ignore(e => e.VencimientoTexto);
+            entity.Ignore(e => e.CuentaPorPagarTexto);
+            entity.Ignore(e => e.CantidadLineas);
+            entity.Ignore(e => e.TotalUnidades);
+
+            entity.OwnsMany(e => e.Lineas, linea =>
+            {
+                linea.WithOwner().HasForeignKey("EntradaInventarioId");
+                linea.Property<int>("Id");
+                linea.HasKey("Id");
+                linea.Property(x => x.ArticuloCodigo).HasMaxLength(20);
+                linea.Property(x => x.ArticuloNombre).HasMaxLength(150);
+                linea.Property(x => x.UnidadTexto).HasMaxLength(30);
+                linea.Property(x => x.Cantidad).HasColumnType("decimal(18,2)");
+                linea.Property(x => x.PrecioUnitario).HasColumnType("decimal(18,2)");
+                linea.Property(x => x.Subtotal).HasColumnType("decimal(18,2)");
+
+                linea.Ignore(x => x.CantidadTexto);
+                linea.Ignore(x => x.PrecioUnitarioTexto);
+                linea.Ignore(x => x.SubtotalTexto);
+                linea.Ignore(x => x.ArticuloTexto);
+            });
+        });
+
+        modelBuilder.Entity<SalidaInventario>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.Numero).IsRequired().HasMaxLength(20);
+            entity.Property(s => s.DestinoDetalle).HasMaxLength(150);
+            entity.Property(s => s.RetiradoPor).IsRequired().HasMaxLength(150);
+            entity.Property(s => s.AutorizadoPorNombre).HasMaxLength(150);
+            entity.Property(s => s.Observaciones).HasMaxLength(500);
+            entity.Property(s => s.MotivoAnulacion).HasMaxLength(500);
+
+            entity.HasIndex(s => new { s.OrganizacionId, s.Numero }).IsUnique();
+
+            entity.Ignore(s => s.CuentaEnKardex);
+            entity.Ignore(s => s.DestinoTexto);
+            entity.Ignore(s => s.MotivoTexto);
+            entity.Ignore(s => s.EstadoTexto);
+            entity.Ignore(s => s.FechaTexto);
+            entity.Ignore(s => s.CantidadLineas);
+            entity.Ignore(s => s.TotalUnidades);
+
+            entity.OwnsMany(s => s.Lineas, linea =>
+            {
+                linea.WithOwner().HasForeignKey("SalidaInventarioId");
+                linea.Property<int>("Id");
+                linea.HasKey("Id");
+                linea.Property(x => x.ArticuloCodigo).HasMaxLength(20);
+                linea.Property(x => x.ArticuloNombre).HasMaxLength(150);
+                linea.Property(x => x.UnidadTexto).HasMaxLength(30);
+                linea.Property(x => x.Cantidad).HasColumnType("decimal(18,2)");
+
+                linea.Ignore(x => x.CantidadTexto);
+                linea.Ignore(x => x.ArticuloTexto);
+            });
         });
 
         AplicarFiltroDeOrganizacion(modelBuilder);

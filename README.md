@@ -65,6 +65,7 @@ ASO_RTR/
 | Módulo | Submódulos | Estado |
 |---|---|---|
 | Finanzas | Cuentas por Pagar · Banco | módulo de ejemplo, funcional |
+| Inventario | Almacén · Entradas · Salidas | funcional |
 
 Además hay **cuatro secciones fijas** según el rol: **Inicio**, **Peticiones** (bandeja de
 solicitudes de cambio), **Administración** (usuarios y permisos, y los datos de la organización)
@@ -72,7 +73,12 @@ y **Configuración**, esta última anclada al pie del menú lateral: tema claro/
 interfaz, cambio de la propia contraseña y las preferencias de la máquina. Se guardan en
 `%AppData%\ASO RTR\ajustes.json`, no en la base de datos.
 
-Los módulos reales del negocio (control de calidad, lavado, empacado, etiquetado…) se agregan
+**Inventario** lleva el almacén de insumos: un catálogo de artículos cuya existencia **no se
+teclea**, se calcula de lo que entró menos lo que salió. Registrar una entrada por compra deja
+sola su cuenta por pagar en Finanzas, y las salidas se emiten como boleto con destino, quién
+retira y quién autoriza.
+
+Los módulos reales de producción (control de calidad, lavado, empacado, etiquetado…) se agregan
 siguiendo la receta de "Cómo se agrega un submódulo" en `CLAUDE.md`.
 
 ## Roles
@@ -82,8 +88,8 @@ en `CLAUDE.md`.
 
 | Rol | Qué puede |
 |---|---|
-| **Operador** | El día a día en Finanzas: registra facturas de proveedor y da de alta proveedores. No mueve dinero ni borra nada: para eso levanta una petición |
-| **Supervisor** | Todo lo de Operador, más registrar pagos (que asientan el movimiento en el libro de banco) y administrar cuentas bancarias. Resuelve peticiones de su dominio |
+| **Operador** | El día a día: registra facturas de proveedor y da de alta proveedores; mantiene el catálogo del almacén y registra entradas y salidas. No mueve dinero, no anula ni borra nada: para eso levanta una petición |
+| **Supervisor** | Todo lo de Operador, más registrar pagos (que asientan el movimiento en el libro de banco), administrar cuentas bancarias, y anular entradas y salidas de almacén. Resuelve peticiones de su dominio |
 | **Administrador de organización** | Todo dentro de la organización. Lo único que no puede es crear otros usuarios Desarrollador |
 | **Desarrollador** | Todo, y es el único que puede crear otros usuarios Desarrollador |
 
@@ -92,7 +98,8 @@ pertenece algo: se estampa la de la instalación.
 
 ## Estado del proyecto
 
-Scaffold recién creado: el armazón técnico está completo y probado (compila, migra y arranca),
-y el único módulo de negocio construido es el de ejemplo (Finanzas). Todo lo demás —qué
-módulos reales necesita la planta, qué roles reales existen, el color de marca— está pendiente
-de definición; ver la sección "PROVISIONAL" de `CLAUDE.md`.
+El armazón técnico está completo y probado (compila, migra y arranca). Hay dos módulos de
+negocio: **Finanzas** (el ejemplo conservado del scaffold) e **Inventario** (el primero
+construido para esta planta). Lo que sigue pendiente de definición —los módulos de producción,
+los roles reales de la planta, el color de marca— está en la sección "PROVISIONAL" de
+`CLAUDE.md`.

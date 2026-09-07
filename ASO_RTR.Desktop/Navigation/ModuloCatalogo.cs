@@ -69,6 +69,20 @@ public static class ModuloCatalogo
                     "Obligaciones con proveedores y su vencimiento.", Iconos.CuentasPorPagar),
                 new Submodulo("Finanzas.Banco", "Banco",
                     "Estado de la cuenta según lo cobrado y pagado en la aplicación.", Iconos.Banco)
+            ]),
+
+        new Modulo(
+            "Inventario",
+            "Inventario",
+            "Existencias del almacén, entradas y salidas.",
+            Iconos.Inventario,
+            [
+                new Submodulo("Inventario.Almacen", "Almacén",
+                    "Existencias de todo lo que la organización guarda en el almacén.", Iconos.Almacen),
+                new Submodulo("Inventario.Entradas", "Entradas",
+                    "Historial de entradas y registro de lo que llega al almacén.", Iconos.Entradas),
+                new Submodulo("Inventario.Salidas", "Salidas",
+                    "Historial de salidas y emisión de boletos de salida.", Iconos.Salidas)
             ])
     ];
 

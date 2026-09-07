@@ -38,6 +38,20 @@
     <views:TransferenciaEditorView />
   </DataTemplate>
 
+  <!-- Inventario -->
+
+  <DataTemplate DataType="{x:Type vm:ArticuloEditorViewModel}">
+    <views:ArticuloEditorView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:EntradaEditorViewModel}">
+    <views:EntradaEditorView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:SalidaEditorViewModel}">
+    <views:SalidaEditorView />
+  </DataTemplate>
+
   <!-- Armazón -->
 
   <DataTemplate DataType="{x:Type vm:UsuarioEditorViewModel}">

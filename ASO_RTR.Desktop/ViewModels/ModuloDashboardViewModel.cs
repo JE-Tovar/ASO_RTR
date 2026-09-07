@@ -134,12 +134,13 @@ public sealed class ModuloDashboardViewModel : ViewModelBase, IRecargable
     /// Las etiquetas se escriben aquí y solo aquí. No están declaradas también en
     /// <see cref="ModuloCatalogo"/>, para que no puedan desincronizarse.
     ///
-    /// PROVISIONAL: hoy solo existe el módulo de ejemplo (Finanzas). Cada módulo de negocio
-    /// nuevo suma su propio caso aquí, siguiendo el mismo patrón — ver CLAUDE.md.
+    /// Cada módulo de negocio nuevo suma su propio caso aquí, siguiendo el mismo patrón — ver
+    /// CLAUDE.md.
     /// </summary>
     private static IReadOnlyList<Indicador>? CalcularIndicadores(Modulo modulo) => modulo.Clave switch
     {
         "Finanzas" => CalcularFinanzas(),
+        "Inventario" => CalcularInventario(),
         _ => null
     };
 
@@ -178,6 +179,43 @@ public sealed class ModuloDashboardViewModel : ViewModelBase, IRecargable
             new Indicador("Por pagar", $"{porPagar:N2}", "deuda con proveedores"),
             new Indicador("Vencido", $"{vencido:N2}", "pagos fuera de plazo",
                 vencido > 0 ? EstadoIndicador.Critico : EstadoIndicador.Normal)
+        ];
+    }
+
+    private static IReadOnlyList<Indicador> CalcularInventario()
+    {
+        // Mismo criterio que CalcularFinanzas con la sesión: aquí abajo todo son consultas.
+        var sesion = SesionActual.Instancia;
+
+        var entradas = DataSourceFactory.CrearEntradasInventario();
+        var salidas = DataSourceFactory.CrearSalidasInventario();
+        var facturas = DataSourceFactory.CrearFacturasProveedor();
+
+        var inventario = new InventarioService(DataSourceFactory.CrearArticulos(), entradas, salidas);
+
+        var banco = new BancoService(DataSourceFactory.CrearMovimientosBanco(),
+                                     DataSourceFactory.CrearCuentasBancarias(), sesion);
+
+        var servicioEntradas = new EntradasInventarioService(
+            entradas, DataSourceFactory.CrearProveedores(), facturas, inventario,
+            new CuentasPorPagarService(facturas, banco, sesion), sesion);
+
+        var servicioSalidas = new SalidasInventarioService(salidas, inventario, sesion);
+
+        var bajoMinimo = inventario.ArticulosBajoMinimo();
+        var sinExistencia = inventario.ArticulosSinExistencia();
+
+        return
+        [
+            // Lo que hay que reponer va primero: es lo único de esta pantalla sobre lo que se
+            // actúa hoy. El tamaño del catálogo es contexto, no una alerta.
+            new Indicador("Bajo mínimo", $"{bajoMinimo}", "artículos por reponer",
+                SegunCuenta(bajoMinimo, 5)),
+            new Indicador("Sin existencia", $"{sinExistencia}", "artículos agotados",
+                SegunCuenta(sinExistencia, 3)),
+            new Indicador("Artículos", $"{inventario.TotalArticulosActivos()}", "activos en el catálogo"),
+            new Indicador("Comprado este mes", $"{servicioEntradas.TotalComprasDelMes():N2}",
+                $"en {servicioEntradas.DelMes().Count} entradas · {servicioSalidas.DelMes().Count} salidas")
         ];
     }
 }

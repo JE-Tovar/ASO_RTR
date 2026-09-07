@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using ASO_RTR.Desktop.Models;
 
@@ -80,6 +80,29 @@ public sealed class CuentasPorPagarService
 
         error = null;
         return true;
+    }
+
+    /// <summary>
+    /// Alta de una cuenta por pagar que NACE DE OTRO MÓDULO (hoy, de una entrada de almacén),
+    /// no de un formulario de Finanzas.
+    ///
+    /// Existe para que ese camino pase por la misma validación que el alta manual —sobre todo
+    /// por el control de número repetido, que es lo que evita que la misma factura del proveedor
+    /// se cargue dos veces— en vez de escribir directo contra la fuente de datos.
+    ///
+    /// No vuelve a comprobar el permiso: lo exigió quien llama, con el permiso de SU documento
+    /// (<see cref="Permisos.EntradasInventario.Crear"/>). Es el mismo criterio con el que
+    /// <see cref="BancoService"/> no repite el chequeo de <c>Finanzas.Pagar</c> al asentar un pago.
+    /// </summary>
+    public FacturaProveedor Crear(FacturaProveedor factura, int usuarioId)
+    {
+        if (!Validar(factura, out var error))
+            throw new InvalidOperationException(error);
+
+        factura.Estado = EstadoFacturaProveedor.Pendiente;
+        factura.CreadoPorId = usuarioId;
+        factura.FechaCreacion = DateTime.Now;
+        return _facturas.Add(factura);
     }
 
     /// <summary>

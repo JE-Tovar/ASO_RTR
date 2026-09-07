@@ -34,6 +34,10 @@ public static class Iconos
     public const string Finanzas =         "";     // currency-circle-dollar U+E54C
     public const string CuentasPorPagar =  "";     // invoice U+EE42
     public const string Banco =            "";     // bank U+E0B4
+    public const string Inventario =       "";     // package U+E390
+    public const string Almacen =          "";     // warehouse U+ECD4
+    public const string Entradas =         "";     // tray-arrow-down U+E010
+    public const string Salidas =          "";     // tray-arrow-up U+EE52
 
     public const string Administracion =   "";     // shield-check U+E40C
     public const string Configuracion =    "";     // gear U+E270
