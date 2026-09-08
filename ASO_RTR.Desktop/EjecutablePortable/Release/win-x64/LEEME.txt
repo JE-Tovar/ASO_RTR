@@ -1,0 +1,23 @@
+ASO RTR — ejecutable de prueba
+================================
+
+Este .exe es autocontenido: trae el runtime de .NET adentro, no hace falta
+instalar .NET ni Visual Studio para correrlo.
+
+Requisito: SQL Server Express LocalDB
+--------------------------------------
+La app sí necesita LocalDB instalado en la máquina donde se ejecute (viene
+con Visual Studio, pero también se instala solo, sin VS, con el paquete
+"SQL Server Express LocalDB" de Microsoft — buscar "Download LocalDB").
+Sin eso, la app muestra un error de conexión al abrir.
+
+Primer arranque
+----------------
+Si es la primera vez que corre en esa máquina, la app crea la base de datos
+sola (migraciones + carpeta App_Data junto al ejecutable) y pide los datos
+de la organización y el primer usuario (Desarrollador). No hay usuarios ni
+contraseñas de fábrica.
+
+Cómo correrlo
+--------------
+Doble clic a ASO_RTR.Desktop.exe. No requiere instalación.
