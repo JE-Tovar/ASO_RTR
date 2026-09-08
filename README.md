@@ -24,8 +24,9 @@ dotnet run
 
 O abrir `ASO_RTR.slnx` en Visual Studio 2022.
 
-La base de datos es un archivo **SQL Server LocalDB** (`ASO_RTR.Desktop/App_Data/AsoRtr.mdf`), no
-un servidor aparte: no hace falta configurar nada para arrancar. Hace falta tener **LocalDB**
+La base de datos es un archivo **SQL Server LocalDB** (`App_Data/AsoRtr.mdf`, creado junto al
+ejecutable que corra — `ASO_RTR.Desktop/bin/Debug/net8.0-windows/App_Data/` con `dotnet run`/F5),
+no un servidor aparte: no hace falta configurar nada para arrancar. Hace falta tener **LocalDB**
 instalado (viene con Visual Studio; si no, se instala aparte con el instalador liviano
 "SqlLocalDB.msi" de SQL Server Express). La primera vez, aplica el esquema:
 

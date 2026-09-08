@@ -29,12 +29,20 @@ public static class AppConfig
     }
 
     /// <summary>
-    /// Carpeta del archivo LocalDB (App_Data, junto al proyecto, no dentro de bin). Asume el
-    /// layout de "dotnet run" / F5 en Debug (bin/Debug/netX.0-windows tres niveles bajo
-    /// ASO_RTR.Desktop/); si el dia de manana se empaqueta un instalador, esto hay que revisarlo.
+    /// Carpeta del archivo LocalDB (App_Data), siempre junto al ejecutable que corre en este
+    /// momento — no subiendo un numero fijo de niveles.
+    ///
+    /// Antes subia tres niveles desde AppContext.BaseDirectory a proposito, para que
+    /// "dotnet run"/F5 (bin/Debug/netX.0-windows) y el publish portable
+    /// (EjecutablePortable/Release/win-x64) cayeran los dos en ASO_RTR.Desktop/App_Data: los dos
+    /// estan exactamente tres niveles bajo ASO_RTR.Desktop/ dentro del repo. Eso se rompia en
+    /// cuanto alguien copiaba SOLO la carpeta del ejecutable portable a otra maquina -que es todo
+    /// el sentido de que sea portable-: las tres subidas caian en una carpeta cualquiera del
+    /// sistema ajeno, LocalDB no podia adjuntar el .mdf ahi, y la migracion tronaba con un error
+    /// que apuntaba a la cadena de conexion sin serlo. Junto al ejecutable, siempre, es lo unico
+    /// que de verdad funciona pegue donde se pegue el .exe.
     /// </summary>
-    private static string CarpetaDatos =>
-        Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "App_Data"));
+    private static string CarpetaDatos => Path.Combine(AppContext.BaseDirectory, "App_Data");
 
     /// <summary>Cadena de conexion a SQL Server (clave ConnectionStrings:AsoRtrDb).</summary>
     public static string ConnectionString =>

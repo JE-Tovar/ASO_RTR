@@ -26,8 +26,10 @@ Thumbs.db
 # Configuracion por maquina (cadena de conexion, etc.) - no se sube al repo
 appsettings.local.json
 
-# Base de datos LocalDB de cada maquina (archivo .mdf/.ldf) - cada quien tiene la suya
-ASO_RTR.Desktop/App_Data/
+# Base de datos LocalDB de cada maquina (archivo .mdf/.ldf) - cada quien tiene la suya. Sin
+# prefijo de carpeta a proposito: App_Data se crea junto al ejecutable que corra (bin/Debug/...,
+# EjecutablePortable/..., o donde sea que alguien copie el portable), no en un solo lugar fijo.
+App_Data/
 
 # Documentacion interna del equipo. El repositorio es PUBLICO: estos documentos son de uso
 # interno y no se publican.
