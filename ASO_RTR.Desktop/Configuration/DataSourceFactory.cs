@@ -31,6 +31,8 @@ public static class DataSourceFactory
     private static IArticuloDataSource? _articulos;
     private static IEntradaInventarioDataSource? _entradasInventario;
     private static ISalidaInventarioDataSource? _salidasInventario;
+    private static IRecepcionMateriaPrimaDataSource? _recepcionesMateriaPrima;
+    private static IDespachoProductoTerminadoDataSource? _despachosProductoTerminado;
     private static IAuthService? _auth;
     private static IAjustesStore? _ajustesStore;
 
@@ -78,6 +80,12 @@ public static class DataSourceFactory
 
     public static ISalidaInventarioDataSource CrearSalidasInventario() =>
         _salidasInventario ??= new SqlSalidaInventarioDataSource();
+
+    public static IRecepcionMateriaPrimaDataSource CrearRecepcionesMateriaPrima() =>
+        _recepcionesMateriaPrima ??= new SqlRecepcionMateriaPrimaDataSource();
+
+    public static IDespachoProductoTerminadoDataSource CrearDespachosProductoTerminado() =>
+        _despachosProductoTerminado ??= new SqlDespachoProductoTerminadoDataSource();
 
     public static IAuthService CrearAuth() =>
         _auth ??= new AuthService(CrearUsuarios());

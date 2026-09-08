@@ -142,6 +142,7 @@ public sealed class ModuloDashboardViewModel : ViewModelBase, IRecargable
     {
         "Finanzas" => CalcularFinanzas(),
         "Inventario" => CalcularInventario(),
+        "MateriaPrima" => CalcularMateriaPrima(),
         "Nomina" => CalcularNomina(),
         "Operaciones" => CalcularOperaciones(),
         "Catalogo" => CalcularCatalogo(),
@@ -220,6 +221,25 @@ public sealed class ModuloDashboardViewModel : ViewModelBase, IRecargable
             new Indicador("Artículos", $"{inventario.TotalArticulosActivos()}", "activos en el catálogo"),
             new Indicador("Comprado este mes", $"{servicioEntradas.TotalComprasDelMes():N2}",
                 $"en {servicioEntradas.DelMes().Count} entradas · {servicioSalidas.DelMes().Count} salidas")
+        ];
+    }
+
+    private static IReadOnlyList<Indicador> CalcularMateriaPrima()
+    {
+        var recepciones = DataSourceFactory.CrearRecepcionesMateriaPrima();
+        var despachos = DataSourceFactory.CrearDespachosProductoTerminado();
+
+        var materiaPrima = new MateriaPrimaService(recepciones, despachos);
+        var sesion = SesionActual.Instancia;
+
+        var servicioRecepciones = new RecepcionesService(recepciones, materiaPrima, sesion);
+        var servicioDespachos = new DespachosService(despachos, materiaPrima, sesion);
+
+        return
+        [
+            new Indicador("En custodia", $"{materiaPrima.TotalPaletasEnCustodia()}", "paletas de Dusa en planta"),
+            new Indicador("Recepciones", $"{servicioRecepciones.DelMes().Count}", "este mes"),
+            new Indicador("Despachos", $"{servicioDespachos.DelMes().Count}", "este mes")
         ];
     }
 

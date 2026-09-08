@@ -9,17 +9,30 @@ namespace ASO_RTR.Desktop.Services;
 /// Reglas de las etapas de un proceso. A diferencia de una factura, aquí no hay pago ni
 /// documento externo que reconciliar — solo la máquina de estados propia de la etapa, con
 /// reproceso: una etapa rechazada puede reintentarse en vez de quedar muerta.
+///
+/// Completar la primera etapa de un proceso también toma botellas de la custodia de Materia
+/// Prima (ver <see cref="CustodiaProduccionService"/> y el comentario dentro de
+/// <see cref="Completar"/>), igual que ya toma artículos de Inventario para el consumo y la
+/// merma.
 /// </summary>
 public sealed class EtapaService
 {
     private readonly IEtapaDataSource _etapas;
+    private readonly IProcesoDataSource _procesos;
     private readonly SalidasInventarioService _salidasInventario;
+    private readonly CustodiaProduccionService _custodiaProduccion;
     private readonly ISesionActual _sesion;
 
-    public EtapaService(IEtapaDataSource etapas, SalidasInventarioService salidasInventario, ISesionActual sesion)
+    public EtapaService(IEtapaDataSource etapas,
+                        IProcesoDataSource procesos,
+                        SalidasInventarioService salidasInventario,
+                        CustodiaProduccionService custodiaProduccion,
+                        ISesionActual sesion)
     {
         _etapas = etapas;
+        _procesos = procesos;
         _salidasInventario = salidasInventario;
+        _custodiaProduccion = custodiaProduccion;
         _sesion = sesion;
     }
 
@@ -140,6 +153,24 @@ public sealed class EtapaService
         var destinoDetalle = destino == AreaDestino.Otro ? etapa.TipoTexto : string.Empty;
         var totalProcesado = procesados.Sum(p => p.Cantidad);
 
+        // Si esta es la primera etapa que se completa de su proceso (sin importar el tipo de
+        // etapa: no hay un pipeline fijo), toma botellas de la custodia de Materia Prima. Las
+        // etapas siguientes del mismo proceso no vuelven a descontar: son las mismas botellas
+        // avanzando de etapa en etapa, no material nuevo. Va antes de tocar Inventario, mismo
+        // criterio que las demás comprobaciones que pueden rechazar la completación.
+        if (EsPrimeraEnCompletarse(etapa))
+        {
+            var proceso = _procesos.GetById(etapa.ProcesoId)
+                ?? throw new InvalidOperationException("El proceso de esta etapa ya no existe.");
+
+            var disponible = _custodiaProduccion.BotellasDisponibles(proceso.TipoBotellaId);
+
+            if (totalProcesado > disponible)
+                throw new InvalidOperationException(
+                    $"No hay suficientes botellas en custodia de {proceso.TipoBotellaEtiqueta}: " +
+                    $"hay {disponible} disponibles y se procesaron {totalProcesado}.");
+        }
+
         var consumoNumero = string.Empty;
         if (etapa.Consumos.Count > 0 && totalProcesado > 0)
         {
@@ -239,6 +270,27 @@ public sealed class EtapaService
         }
 
         return copia;
+    }
+
+    /// <summary>Si el proceso de esta etapa no tiene todavía ninguna OTRA etapa completada.</summary>
+    private bool EsPrimeraEnCompletarse(Etapa etapa) =>
+        !_etapas.GetByProceso(etapa.ProcesoId).Any(e => e.Id != etapa.Id && e.Estado == EstadoEtapa.Completada);
+
+    /// <summary>
+    /// Cuánto queda disponible en la custodia de Materia Prima para esta etapa, SI sería la
+    /// primera en completarse de su proceso — null si el proceso ya tiene otra etapa completada
+    /// antes, porque entonces completar esta no va a descontar nada. Lo usa el diálogo de
+    /// "Completar etapa" para avisar antes de guardar, igual que <c>SePasa</c> en las líneas de
+    /// un Despacho — la comprobación de verdad sigue siendo la de <see cref="Completar"/>.
+    /// </summary>
+    public int? BotellasDisponiblesParaCompletar(Etapa etapa)
+    {
+        if (!EsPrimeraEnCompletarse(etapa))
+            return null;
+
+        return _procesos.GetById(etapa.ProcesoId) is { } proceso
+            ? _custodiaProduccion.BotellasDisponibles(proceso.TipoBotellaId)
+            : null;
     }
 
     /// <summary>

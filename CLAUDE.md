@@ -61,8 +61,9 @@ F5 en Visual Studio (`ASO_RTR.slnx`).
 
 ## Estructura de módulos
 
-Hoy hay **cinco módulos de negocio**: **Finanzas** (Cuentas por Pagar y Banco — el ejemplo
-conservado del scaffold), **Inventario** (Almacén, Entradas y Salidas), **Nómina** (Empleados),
+Hoy hay **seis módulos de negocio**: **Finanzas** (Cuentas por Pagar y Banco — el ejemplo
+conservado del scaffold), **Inventario** (Almacén, Entradas y Salidas), **Materia Prima**
+(Custodia, Recepciones y Despachos de las botellas de Dusa), **Nómina** (Empleados),
 **Operaciones** (Procesos y sus etapas) y **Catálogo** (Tipos de Botella), más **cuatro módulos
 fijados** sin submódulos: **Inicio**, **Peticiones**
 (bandeja de solicitudes de cambio), **Administración** (usuarios con sus permisos, y los datos de la propia
@@ -76,8 +77,8 @@ al pie del sidebar, fuera de su `ScrollViewer`, porque no es trabajo del día).
 - `Views/InicioView` — lanzador con una tarjeta por módulo.
 - `Views/ModuloDashboardView` — resumen del módulo: indicadores + tarjeta por submódulo. Los
   valores los calcula `ModuloDashboardViewModel.CalcularIndicadores` (un `switch` por clave de
-  módulo) — hoy con los casos `"Finanzas"`, `"Inventario"`, `"Nomina"`, `"Operaciones"` y
-  `"Catalogo"`.
+  módulo) — hoy con los casos `"Finanzas"`, `"Inventario"`, `"MateriaPrima"`, `"Nomina"`,
+  `"Operaciones"` y `"Catalogo"`.
 - `Views/SubmoduloView` — submódulo en construcción, para cuando se agregue uno nuevo al catálogo
   antes de tener su pantalla real.
 - Framework CRUD reutilizable (`CrudViewModelBase`, `CrudEditorViewModelBase`, `CrudEditorWindow`,
@@ -171,6 +172,101 @@ salida). Las decisiones que no se deducen del código:
   silencio. Lo usan las dos grillas de líneas para ocultar la columna de precios en un ajuste y
   para llegar al comando de quitar línea.
 
+## Materia Prima (2026-09-08)
+
+Segundo módulo construido para esta planta. RTR presta un servicio de control de calidad,
+limpieza, empacado y etiquetado de botellas de vidrio para una única empresa externa, **Dusa**:
+la gandola trae la orden de entrega, y cuando el proceso termina las paletas ya trabajadas vuelven
+a Dusa. Tres submódulos: **Custodia** (cuánto hay ahora, por tipo de botella), **Recepciones** (lo
+que trae la gandola) y **Despachos** (lo que vuelve a Dusa). Las decisiones que no se deducen del
+código:
+
+- **Es maquila, no compra.** Dusa sigue siendo dueña de las botellas todo el tiempo — RTR nunca
+  las compra, solo las procesa. Por eso registrar una `RecepcionMateriaPrima` **nunca** genera
+  cuenta por pagar ni `FacturaProveedor`, a diferencia de `EntradaInventario.CompraProveedor`/
+  `CompraExterna`: `RecepcionesService` ni siquiera depende de `CuentasPorPagarService`. Un
+  `DespachoProductoTerminado` tampoco necesita campo de destino: el destino siempre es Dusa,
+  porque es la única contraparte de esta instalación.
+- **Es una entidad nueva ligada a `TipoBotella` (Catálogo), no una extensión de `Articulo`
+  (Inventario).** `Articulo` modela insumos que sí son propiedad de RTR (etiquetas, cajas,
+  químicos), con una `UnidadMedida` genérica; las botellas de Dusa no son de RTR y se cuentan en
+  **paletas** de un tipo de botella concreto, con su propio patrón de paletizado. Mezclar los dos
+  en la misma tabla habría acoplado dos conceptos de dueño distinto solo por compartir el verbo
+  "entrar/salir del almacén". `Articulo`, `EntradaInventario` y `SalidaInventario` quedaron
+  intactos a propósito.
+- **Es un módulo nuevo (`MateriaPrima`), no dos submódulos más de Inventario.** El motivo es de
+  negocio, no técnico: este archivo ya separa Catálogo de Operaciones pese a estar acoplados
+  (`Proceso.TipoBotellaId`), porque la organización del menú sigue el concepto de negocio, no la
+  conveniencia de compartir código. Recepción/Despacho de Dusa es, en todo lo que importa, lo
+  opuesto de Entradas/Salidas de Inventario: no es de RTR, no cuesta dinero, se cuenta distinto.
+  Meterlos en el mismo grupo del sidebar habría invitado justo a la confusión que se quiso evitar.
+- **La custodia se deriva, igual que la existencia de Inventario.**
+  `MateriaPrimaService.ExistenciasPorTipoBotella()` suma las líneas de recepción registradas y
+  resta las de despacho registradas, sin contar documentos anulados — mismo patrón que
+  `InventarioService.ExistenciasPorArticulo()`, con `TipoBotellaId` en vez de `ArticuloId`.
+  `DespachosService.Validar` revisa esa custodia EN VIVO antes de dejar salir una paleta, y
+  `RecepcionesService.Anular` revisa que deshacer una recepción no la deje en negativo — los dos,
+  calco de las reglas equivalentes de `SalidasInventarioService`/`EntradasInventarioService`.
+- **Cada línea guarda un snapshot de `BotellasPorPaleta`** (`BotellasPorPaletaSnapshot`) al
+  momento del movimiento, para que el total histórico de un documento no cambie si alguien edita
+  después el patrón de paletizado del `TipoBotella` en Catálogo — mismo criterio que los
+  `…Nombre`/`…Texto` que ya se snapshot-ean en toda la aplicación.
+- **`Custodia` no es un CRUD.** A diferencia de `RecepcionesViewModel`/`DespachosViewModel` (que
+  sí heredan de `PantallaCrudViewModel<T, TId>`, porque Recepciones y Despachos son documentos que
+  se dan de alta), `CustodiaMateriaPrimaViewModel` hereda directo de `PantallaViewModelBase`: no
+  hay nada que crear, editar ni eliminar, es un reporte derivado — junta todos los `TipoBotella`
+  (activos e inactivos, para no esconder un tipo desactivado que todavía tiene paletas en planta)
+  con la custodia calculada, y arma su propia lista filtrable a mano, al estilo de
+  `PeticionesViewModel`. Va **antes** de Recepciones y Despachos en el menú, mismo lugar que ocupa
+  Almacén frente a Entradas/Salidas en Inventario.
+- **No hay registro de "Dusa" como proveedor ni cliente.** Una sola contraparte fija para toda la
+  instalación no necesita un padrón — mismo criterio que un `Ajuste` de Inventario no necesita
+  proveedor. Si algún día aparece una segunda contraparte, ahí sí hace falta modelarla.
+- **Recepciones y Despachos siguen siendo documentos independientes** — ninguno de los dos
+  referencia un `Proceso`. Lo que sí se conectó (2026-09-08, ver más abajo) es la CUSTODIA
+  agregada: cuánto de lo recibido ya tomó algún proceso de Operaciones para trabajarlo.
+- **Placeholder de facturación, no Cuentas por Cobrar.** `DespachoProductoTerminado` lleva dos
+  campos opcionales (`FacturaDusaReferencia`, `FacturaDusaFecha`) para dejar constancia manual de
+  que el servicio ya se facturó a Dusa por fuera de la aplicación. No generan ni validan nada: no
+  hay ningún módulo de Cuentas por Cobrar en este scaffold (se descartó al heredar de ASO, ver
+  "Origen de este proyecto"), y construir uno de verdad es trabajo aparte — ver PROVISIONAL.
+
+### Operaciones toma botellas de la custodia (2026-09-08)
+
+Un `Proceso` no guarda cantidad (sigue siendo así, ver "Cómo se agrega un submódulo" más abajo:
+"la cantidad la define cada etapa al completarse"), pero completar la **primera** `Etapa` que se
+complete de un proceso — cualquiera sea su `TipoEtapa`, porque las etapas no son un pipeline fijo
+y un proceso podría no tener ninguna etapa "Recepción" — ahora también descuenta botellas de la
+custodia de Materia Prima, usando `Etapa.CantidadProcesada` de esa etapa. Las etapas siguientes
+del mismo proceso, completadas después, no vuelven a descontar: son las mismas botellas avanzando
+de etapa en etapa, no material nuevo. Si no hay suficiente disponible, `EtapaService.Completar`
+rechaza la completación antes de tocar Inventario, mismo criterio que
+`DespachosService.Validar` no deja despachar más paletas de las que hay.
+
+- **`Services/CustodiaProduccionService.cs`** es el puente, deliberadamente aparte de
+  `MateriaPrimaService`: el sentido de la dependencia en toda la app va del módulo más nuevo hacia
+  el más viejo (`EtapaService` ya depende de `SalidasInventarioService` de Inventario, igual que
+  `EntradasInventarioService` depende de `CuentasPorPagarService` de Finanzas) — Operaciones
+  depende de Materia Prima, y no al revés, porque una recepción no tiene por qué saber que
+  Operaciones existe. Expone `BotellasTomadasPorProcesos`/`BotellasDisponibles` por
+  `TipoBotellaId`, calculado en vivo (ninguna de las dos cantidades se guarda en ningún lado).
+- **Nada nuevo se persiste.** Ni `Proceso` ni `Etapa` ganaron ningún campo. Lo tomado por cada
+  proceso se deriva de sus propias etapas cada vez que hace falta, igual que la custodia misma se
+  deriva de Recepciones y Despachos — por eso `ProcesosCrudViewModel` puede simplemente bloquear
+  `PuedeEditar`/`PuedeEliminar` cuando el proceso ya tiene alguna etapa (editar el tipo de botella
+  o borrar el proceso después de tomar custodia corrompería ese cálculo derivado) sin necesitar
+  ninguna máquina de estados nueva en `Proceso`.
+- **`Materia Prima · Custodia`** (ver más arriba) muestra las dos columnas nuevas
+  (`BotellasTomadas`/`BotellasDisponibles`) reusando el mismo servicio — es la respuesta directa a
+  "cuántas botellas hay procesadas y cuántas no" que motivó todo este cambio. El diálogo de
+  "Completar etapa" (`CompletarEtapaViewModel`) también avisa el disponible antes de guardar,
+  mismo `SePasa` en rojo que ya usan las líneas de un Despacho.
+- **Coincidencia de nombres, no de conceptos**: `TipoEtapa` (Operaciones) tiene los valores
+  `Recepcion` y `Despacho` como tipos de ETAPA de un proceso — no tienen ninguna relación con los
+  documentos `RecepcionMateriaPrima`/`DespachoProductoTerminado` de Materia Prima. Coinciden en
+  vocabulario por casualidad (los dos describen "entra"/"sale" en español), no hay ningún vínculo
+  de datos entre ellos.
+
 ## Persistencia
 
 Las entidades de dominio persisten en **SQL Server vía EF Core Migrations**.
@@ -179,7 +275,9 @@ Las entidades de dominio persisten en **SQL Server vía EF Core Migrations**.
   modelo recortado: `Organizacion`, `Usuario`, `PermisoUsuario`, `PeticionCambio`, `Proveedor`,
   `FacturaProveedor`+`FacturaProveedorLinea`, `CuentaBancaria`, `MovimientoBanco`) y seguida de
   `Inventario` (`Articulo`, `EntradaInventario`+`EntradaInventarioLinea`,
-  `SalidaInventario`+`SalidaInventarioLinea`).
+  `SalidaInventario`+`SalidaInventarioLinea`) y `MateriaPrima`
+  (`RecepcionMateriaPrima`+`RecepcionMateriaPrimaLinea`,
+  `DespachoProductoTerminado`+`DespachoProductoTerminadoLinea`).
 - **La cadena de conexión vive solo en `appsettings.local.json`** (por máquina, en `.gitignore`);
   la de `appsettings.json` (clave `ConnectionStrings:AsoRtrDb`) apunta a LocalDB con un `.mdf` en
   `App_Data`.
@@ -338,6 +436,12 @@ deliberados, fáciles de revisar y cambiar; no son bugs:
 7. **Pantalla de datos de la organización**: `Administración · Organización` (antes "Datos del
    Núcleo" en ASO) solo pide nombre y código; si el negocio real necesita más datos de la
    organización (dirección, RIF, etc.), agregarlos ahí.
+8. **Facturación del servicio de maquila a Dusa**: `DespachoProductoTerminado` solo lleva dos
+   campos de constancia manual (`FacturaDusaReferencia`/`FacturaDusaFecha`, ver "Materia Prima
+   (2026-09-08)") — no hay Cuentas por Cobrar de verdad. Si el negocio real necesita facturar y
+   cobrar desde la aplicación, diseñar ese módulo cuando se conozca el flujo real (¿se factura por
+   despacho, por lote, por período?), siguiendo la receta de "Cómo se agrega un submódulo"; el
+   Cuentas por Pagar existente es la plantilla más cercana, en espejo.
 
 ## Próximo paso sugerido
 

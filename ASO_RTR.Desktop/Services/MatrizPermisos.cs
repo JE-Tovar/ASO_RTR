@@ -68,6 +68,9 @@ public static class MatrizPermisos
         Permisos.Ver("Inventario.Almacen"),
         Permisos.Ver("Inventario.Entradas"),
         Permisos.Ver("Inventario.Salidas"),
+        Permisos.Ver("MateriaPrima.Custodia"),
+        Permisos.Ver("MateriaPrima.Recepciones"),
+        Permisos.Ver("MateriaPrima.Despachos"),
         Permisos.Ver("Nomina.Empleados"),
         Permisos.Ver("Operaciones.Procesos"),
         Permisos.Ver("Catalogo.TiposBotella"),
@@ -83,6 +86,9 @@ public static class MatrizPermisos
 
         Permisos.EntradasInventario.Crear,
         Permisos.SalidasInventario.Crear,
+
+        Permisos.Recepciones.Crear,
+        Permisos.Despachos.Crear,
 
         Permisos.Empleados.Crear,
         Permisos.Empleados.Editar,
@@ -107,8 +113,9 @@ public static class MatrizPermisos
         // - Finanzas.Pagar / Banco.*: mover dinero es de Supervisor.
         // - Proveedores.Eliminar / FacturasProveedor.Eliminar / Empleados.Eliminar /
         //   Procesos.Eliminar / Etapas.Eliminar / Articulos.Eliminar: borrar es de Supervisor.
-        // - EntradasInventario.Anular / SalidasInventario.Anular: deshacer un documento del
-        //   almacén es de Supervisor, igual que deshacer uno de Finanzas.
+        // - EntradasInventario.Anular / SalidasInventario.Anular / Recepciones.Anular /
+        //   Despachos.Anular: deshacer un documento del almacén o de materia prima es de
+        //   Supervisor, igual que deshacer uno de Finanzas.
         //
         // Las transiciones de Operaciones (Iniciar/Completar/Rechazar/Reintentar) SÍ son de
         // Operador: avanzar una etapa es el trabajo operativo del día a día en planta, no un
@@ -146,6 +153,9 @@ public static class MatrizPermisos
 
             Permisos.EntradasInventario.Anular,
             Permisos.SalidasInventario.Anular,
+
+            Permisos.Recepciones.Anular,
+            Permisos.Despachos.Anular,
 
             Permisos.Peticiones.Resolver
 

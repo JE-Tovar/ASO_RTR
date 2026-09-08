@@ -11,14 +11,17 @@ namespace ASO_RTR.Desktop.ViewModels;
 public sealed class ProcesosCrudViewModel : CrudViewModelBase<Proceso, int>
 {
     private readonly ITipoBotellaDataSource _tiposBotella;
+    private readonly IEtapaDataSource _etapas;
 
     public ProcesosCrudViewModel(IProcesoDataSource procesos,
                                  ITipoBotellaDataSource tiposBotella,
+                                 IEtapaDataSource etapas,
                                  IServicioDialogo dialogos,
                                  ISesionActual sesion)
         : base(procesos, dialogos, sesion)
     {
         _tiposBotella = tiposBotella;
+        _etapas = etapas;
     }
 
     protected override string ModuloPermiso => "Procesos";
@@ -26,6 +29,22 @@ public sealed class ProcesosCrudViewModel : CrudViewModelBase<Proceso, int>
     protected override bool CoincideBusqueda(Proceso item, string texto) =>
         item.TipoBotellaEtiqueta.Contains(texto, StringComparison.OrdinalIgnoreCase)
         || item.Notas.Contains(texto, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Un proceso con al menos una etapa ya no se puede editar: cambiarle el tipo de botella
+    /// después de que una etapa completada le tomó botellas de la custodia corrompería ese
+    /// cálculo (que se deriva del `TipoBotellaId` vigente del proceso, no de uno congelado).
+    /// </summary>
+    protected override bool PuedeEditar(Proceso item) => TieneEtapas(item) is false;
+
+    /// <summary>
+    /// Eliminarlo dejaría sus etapas huérfanas (`Etapa.ProcesoId` no tiene clave foránea real) y
+    /// el descuento que ya hicieron en la custodia desaparecería del cálculo derivado sin que las
+    /// botellas hayan dejado de estar procesadas de verdad.
+    /// </summary>
+    protected override bool PuedeEliminar(Proceso item) => TieneEtapas(item) is false;
+
+    private bool TieneEtapas(Proceso proceso) => _etapas.GetByProceso(proceso.Id).Any();
 
     protected override Proceso CrearNuevo() => new() { FechaCreacion = DateTime.Today };
 
@@ -46,6 +65,7 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
     private readonly IServicioDialogo _dialogos;
     private readonly ISesionActual _sesionActual;
     private readonly InventarioService _inventario;
+    private readonly CustodiaProduccionService _custodiaProduccion;
     private readonly EtapaService _servicio;
 
     private string _filtroEstado = FiltroTodas;
@@ -71,7 +91,14 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
         var salidasInventario = new SalidasInventarioService(
             DataSourceFactory.CrearSalidasInventario(), _inventario, sesion);
 
-        _servicio = new EtapaService(etapas, salidasInventario, sesion);
+        // Completar la primera etapa de un proceso también toma botellas de la custodia de
+        // Materia Prima, mismo espíritu que el consumo de artículos de Inventario.
+        var materiaPrima = new MateriaPrimaService(DataSourceFactory.CrearRecepcionesMateriaPrima(),
+                                                   DataSourceFactory.CrearDespachosProductoTerminado());
+        _custodiaProduccion = new CustodiaProduccionService(procesos, etapas,
+                                                            DataSourceFactory.CrearTiposBotella(), materiaPrima);
+
+        _servicio = new EtapaService(etapas, procesos, salidasInventario, _custodiaProduccion, sesion);
 
         CambiarFiltroEstadoCommand = new RelayCommand<string>(filtro =>
         {
@@ -149,7 +176,8 @@ public sealed class EtapasCrudViewModel : CrudViewModelBase<Etapa, int>
         if (SelectedItem is not { } etapa)
             return;
 
-        var editor = new CompletarEtapaViewModel(etapa, _inventario.ActivosConExistencia());
+        var editor = new CompletarEtapaViewModel(etapa, _inventario.ActivosConExistencia(),
+                                                 _servicio.BotellasDisponiblesParaCompletar(etapa));
         if (!_dialogos.MostrarEditor(editor))
             return;
 
@@ -213,11 +241,12 @@ public sealed class OperacionesViewModel : PantallaViewModelBase
         : base(modulo, submodulo)
     {
         var procesos = DataSourceFactory.CrearProcesos();
+        var etapas = DataSourceFactory.CrearEtapas();
         var empleados = DataSourceFactory.CrearEmpleados();
         var tiposBotella = DataSourceFactory.CrearTiposBotella();
 
-        Procesos = new ProcesosCrudViewModel(procesos, tiposBotella, dialogos, sesion);
-        Etapas = new EtapasCrudViewModel(DataSourceFactory.CrearEtapas(), procesos, empleados, dialogos, sesion);
+        Procesos = new ProcesosCrudViewModel(procesos, tiposBotella, etapas, dialogos, sesion);
+        Etapas = new EtapasCrudViewModel(etapas, procesos, empleados, dialogos, sesion);
 
         CambiarVistaCommand = new RelayCommand<string>(vista => VistaActual = vista);
     }

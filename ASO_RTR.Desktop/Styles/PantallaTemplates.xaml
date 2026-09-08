@@ -37,6 +37,20 @@
     <views:SalidasView />
   </DataTemplate>
 
+  <!-- Materia Prima · Custodia, Recepciones y Despachos -->
+
+  <DataTemplate DataType="{x:Type vm:CustodiaMateriaPrimaViewModel}">
+    <views:CustodiaMateriaPrimaView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:RecepcionesViewModel}">
+    <views:RecepcionesView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:DespachosViewModel}">
+    <views:DespachosView />
+  </DataTemplate>
+
   <!-- Nómina · Empleados -->
 
   <DataTemplate DataType="{x:Type vm:EmpleadosViewModel}">

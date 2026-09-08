@@ -335,6 +335,40 @@
     </Style.Triggers>
   </Style>
 
+  <!-- Chip de estado de una recepción y de un despacho de materia prima. Mismo criterio que
+       entradas/salidas de almacén: en pie o deshecho, pero WPF liga el DataTrigger por tipo
+       exacto de enum, así que EstadoRecepcion/EstadoDespacho necesitan su propio chip aunque el
+       diseño sea idéntico. -->
+  <Style x:Key="ChipEstadoRecepcionStyle" TargetType="Border" BasedOn="{StaticResource ChipBaseStyle}">
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding Estado}" Value="{x:Static models:EstadoRecepcion.Registrada}">
+        <Setter Property="Background" Value="{DynamicResource InfoSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InfoBordeBrush}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource InfoTextBrush}" />
+      </DataTrigger>
+      <DataTrigger Binding="{Binding Estado}" Value="{x:Static models:EstadoRecepcion.Anulada}">
+        <Setter Property="Background" Value="{DynamicResource NeutralSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NeutralBordeBrush}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource NeutralTextBrush}" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="ChipEstadoDespachoStyle" TargetType="Border" BasedOn="{StaticResource ChipBaseStyle}">
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding Estado}" Value="{x:Static models:EstadoDespacho.Registrada}">
+        <Setter Property="Background" Value="{DynamicResource InfoSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InfoBordeBrush}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource InfoTextBrush}" />
+      </DataTrigger>
+      <DataTrigger Binding="{Binding Estado}" Value="{x:Static models:EstadoDespacho.Anulada}">
+        <Setter Property="Background" Value="{DynamicResource NeutralSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NeutralBordeBrush}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource NeutralTextBrush}" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
   <!-- Nombre anterior de SectionCardStyle. Sigue vivo porque lo citan 64 sitios, para cuatro
        cosas distintas; las vistas lo van cambiando por el nombre que corresponda conforme se
        rehacen, y entonces desaparece. -->

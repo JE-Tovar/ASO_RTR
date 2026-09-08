@@ -94,6 +94,23 @@ public static class Permisos
         public const string Anular = "SalidasInventario.Anular";
     }
 
+    /// <summary>
+    /// Recepciones de materia prima de Dusa. No hay "Editar" ni "Eliminar": es un documento y se
+    /// anula, igual que <see cref="EntradasInventario"/>.
+    /// </summary>
+    public static class Recepciones
+    {
+        public const string Crear = "Recepciones.Crear";
+        public const string Anular = "Recepciones.Anular";
+    }
+
+    /// <summary>Despachos de producto terminado a Dusa. Mismo criterio que las recepciones.</summary>
+    public static class Despachos
+    {
+        public const string Crear = "Despachos.Crear";
+        public const string Anular = "Despachos.Anular";
+    }
+
     public static class Peticiones
     {
         public const string Solicitar = "Peticiones.Solicitar";

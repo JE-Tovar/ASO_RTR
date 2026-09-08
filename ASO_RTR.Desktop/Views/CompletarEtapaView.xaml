@@ -93,6 +93,26 @@
       </ItemsControl>
     </controls:FormField>
 
+    <!-- Solo aparece cuando esta sería la primera etapa en completarse del proceso: es cuando
+         se toma botellas de la custodia de Materia Prima. -->
+    <TextBlock Margin="0,16,0,0" HorizontalAlignment="Right" TextWrapping="Wrap"
+               FontSize="{StaticResource FsCaption}"
+               Visibility="{Binding MuestraDisponible, Converter={StaticResource BoolToVis}}">
+      <TextBlock.Style>
+        <Style TargetType="TextBlock">
+          <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding SePasaDeCustodia}" Value="True">
+              <Setter Property="Foreground" Value="{DynamicResource DangerTextBrush}" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </TextBlock.Style>
+      <Run Text="Disponible en custodia de materia prima:" />
+      <Run Text="{Binding BotellasDisponiblesTexto, Mode=OneWay}" FontWeight="{StaticResource FwMedium}" />
+      <Run Text="botellas. Esta es la primera etapa del proceso: al completarla se descuentan de la custodia." />
+    </TextBlock>
+
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
       <TextBlock Text="Merma total" VerticalAlignment="Center" Margin="0,0,12,0"
                  Foreground="{DynamicResource TextSecondaryBrush}" />

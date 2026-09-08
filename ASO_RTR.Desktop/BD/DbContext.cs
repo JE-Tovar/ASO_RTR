@@ -37,6 +37,10 @@ public class AsoRtrDbContext : DbContext
     // ---- Catálogo · Tipos de Botella ----
     public DbSet<TipoBotella> TiposBotella { get; set; }
 
+    // ---- Materia Prima · Recepciones y Despachos ----
+    public DbSet<RecepcionMateriaPrima> RecepcionesMateriaPrima { get; set; }
+    public DbSet<DespachoProductoTerminado> DespachosProductoTerminado { get; set; }
+
     /// <summary>
     /// Organización sobre la que trabaja ESTE contexto. Se toma del ámbito al construirlo y no
     /// cambia después: cada método de las fuentes Sql abre su propio contexto, así que un cambio
@@ -426,6 +430,70 @@ public class AsoRtrDbContext : DbContext
                 merma.HasKey("Id");
                 merma.Property(x => x.EmpleadoNombre).HasMaxLength(150);
                 merma.Property(x => x.ArticuloNombre).HasMaxLength(150);
+            });
+        });
+
+        // ---- Materia Prima · Recepciones y Despachos ----
+
+        modelBuilder.Entity<RecepcionMateriaPrima>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Numero).IsRequired().HasMaxLength(20);
+            entity.Property(r => r.NumeroOrdenEntrega).IsRequired().HasMaxLength(50);
+            entity.Property(r => r.Gandolero).IsRequired().HasMaxLength(150);
+            entity.Property(r => r.Placa).IsRequired().HasMaxLength(15);
+            entity.Property(r => r.Observaciones).HasMaxLength(500);
+            entity.Property(r => r.MotivoAnulacion).HasMaxLength(500);
+            entity.Property(r => r.CreadoPorNombre).HasMaxLength(150);
+
+            // El correlativo se calcula como "el último + 1" antes de escribir; este índice es
+            // la red que convierte una carrera entre dos puestos en un error, no en un duplicado.
+            entity.HasIndex(r => new { r.OrganizacionId, r.Numero }).IsUnique();
+
+            entity.Ignore(r => r.CuentaEnCustodia);
+            entity.Ignore(r => r.EstadoTexto);
+            entity.Ignore(r => r.FechaTexto);
+            entity.Ignore(r => r.CantidadLineas);
+            entity.Ignore(r => r.TotalPaletas);
+
+            entity.OwnsMany(r => r.Lineas, linea =>
+            {
+                linea.WithOwner().HasForeignKey("RecepcionMateriaPrimaId");
+                linea.Property<int>("Id");
+                linea.HasKey("Id");
+                linea.Property(x => x.TipoBotellaEtiqueta).HasMaxLength(150);
+
+                linea.Ignore(x => x.TotalBotellas);
+                linea.Ignore(x => x.CantidadPaletasTexto);
+            });
+        });
+
+        modelBuilder.Entity<DespachoProductoTerminado>(entity =>
+        {
+            entity.HasKey(d => d.Id);
+            entity.Property(d => d.Numero).IsRequired().HasMaxLength(20);
+            entity.Property(d => d.Observaciones).HasMaxLength(500);
+            entity.Property(d => d.MotivoAnulacion).HasMaxLength(500);
+            entity.Property(d => d.AutorizadoPorNombre).HasMaxLength(150);
+            entity.Property(d => d.FacturaDusaReferencia).HasMaxLength(100);
+
+            entity.HasIndex(d => new { d.OrganizacionId, d.Numero }).IsUnique();
+
+            entity.Ignore(d => d.CuentaEnCustodia);
+            entity.Ignore(d => d.EstadoTexto);
+            entity.Ignore(d => d.FechaTexto);
+            entity.Ignore(d => d.CantidadLineas);
+            entity.Ignore(d => d.TotalPaletas);
+
+            entity.OwnsMany(d => d.Lineas, linea =>
+            {
+                linea.WithOwner().HasForeignKey("DespachoProductoTerminadoId");
+                linea.Property<int>("Id");
+                linea.HasKey("Id");
+                linea.Property(x => x.TipoBotellaEtiqueta).HasMaxLength(150);
+
+                linea.Ignore(x => x.TotalBotellas);
+                linea.Ignore(x => x.CantidadPaletasTexto);
             });
         });
 

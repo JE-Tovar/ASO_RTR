@@ -87,6 +87,19 @@ public static class ModuloCatalogo
                     "Historial de salidas y emisión de boletos de salida.", Iconos.Salidas)
             ]),
         new Modulo(
+            "MateriaPrima",
+            "Materia Prima",
+            "Recepción y despacho de botellas de Dusa en custodia.",
+            Iconos.MateriaPrima,
+            [
+                new Submodulo("MateriaPrima.Custodia", "Custodia",
+                    "Paletas de cada tipo de botella que RTR tiene en custodia de Dusa, ahora mismo.", Iconos.Almacen),
+                new Submodulo("MateriaPrima.Recepciones", "Recepciones",
+                    "Paletas que trae la gandola de Dusa según su orden de entrega.", Iconos.Entradas),
+                new Submodulo("MateriaPrima.Despachos", "Despachos",
+                    "Paletas ya procesadas que vuelven a Dusa.", Iconos.Salidas)
+            ]),
+        new Modulo(
             "Nomina",
             "Nómina",
             "Personal de la planta.",

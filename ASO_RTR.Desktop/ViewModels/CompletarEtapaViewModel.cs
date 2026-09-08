@@ -95,15 +95,18 @@ public sealed class MermaLineaViewModel : ViewModelBase
 /// Completar una etapa: cuánto procesó cada empleado, más las líneas de merma que hubiera (libres,
 /// no una por empleado). El consumo automático de materiales (<see cref="Etapa.Consumos"/>) no se
 /// pide aquí — ya quedó configurado al crear/editar la etapa — pero se muestra una vista previa
-/// de lo que se va a descontar, para que no sea una sorpresa silenciosa.
+/// de lo que se va a descontar, para que no sea una sorpresa silenciosa. Si esta sería la primera
+/// etapa en completarse de su proceso, también avisa cuánto queda disponible en la custodia de
+/// Materia Prima (ver <see cref="BotellasDisponibles"/>).
 /// </summary>
 public sealed class CompletarEtapaViewModel : CrudEditorViewModelBase
 {
     private readonly Etapa _etapa;
 
-    public CompletarEtapaViewModel(Etapa etapa, IReadOnlyList<Articulo> articulos)
+    public CompletarEtapaViewModel(Etapa etapa, IReadOnlyList<Articulo> articulos, int? botellasDisponibles)
     {
         _etapa = etapa;
+        BotellasDisponibles = botellasDisponibles;
         Descripcion = $"{etapa.ProcesoEtiqueta} — {etapa.TipoTexto}";
 
         EmpleadosOpciones = [.. etapa.Empleados.Select(e => new EmpleadoOpcion(e.EmpleadoId, e.EmpleadoNombre))];
@@ -148,6 +151,21 @@ public sealed class CompletarEtapaViewModel : CrudEditorViewModelBase
 
     public int TotalProcesado => Renglones.Sum(r => r.CantidadValor);
     public string TotalProcesadoTexto => TotalProcesado.ToString();
+
+    /// <summary>
+    /// Botellas disponibles en la custodia de Materia Prima, SOLO cuando esta etapa sería la
+    /// primera en completarse de su proceso (si ya hay otra completada antes, esta no va a
+    /// descontar nada y no hay nada que avisar). Null en ese caso, y también si el tipo de
+    /// botella no tiene custodia registrada.
+    /// </summary>
+    public int? BotellasDisponibles { get; }
+
+    public bool MuestraDisponible => BotellasDisponibles is not null;
+
+    public string BotellasDisponiblesTexto => BotellasDisponibles is { } n ? $"{n}" : string.Empty;
+
+    /// <summary>Se pinta en rojo; la comprobación de verdad la hace EtapaService.Completar.</summary>
+    public bool SePasaDeCustodia => BotellasDisponibles is { } n && TotalProcesado > n;
 
     public int TotalMerma => Mermas.Where(m => m.CantidadEsValida).Sum(m => m.CantidadValor);
     public string TotalMermaTexto => TotalMerma.ToString();
@@ -197,5 +215,6 @@ public sealed class CompletarEtapaViewModel : CrudEditorViewModelBase
         OnPropertyChanged(nameof(TotalMerma));
         OnPropertyChanged(nameof(TotalMermaTexto));
         OnPropertyChanged(nameof(ConsumoPreview));
+        OnPropertyChanged(nameof(SePasaDeCustodia));
     }
 }

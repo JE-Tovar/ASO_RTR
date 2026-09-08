@@ -52,6 +52,16 @@
     <views:SalidaEditorView />
   </DataTemplate>
 
+  <!-- Materia Prima · Recepciones y Despachos -->
+
+  <DataTemplate DataType="{x:Type vm:RecepcionEditorViewModel}">
+    <views:RecepcionEditorView />
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vm:DespachoEditorViewModel}">
+    <views:DespachoEditorView />
+  </DataTemplate>
+
   <!-- Nómina · Empleados -->
 
   <DataTemplate DataType="{x:Type vm:EmpleadoEditorViewModel}">

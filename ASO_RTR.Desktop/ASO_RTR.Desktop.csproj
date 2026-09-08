@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>ASO_RTR.Desktop</RootNamespace>
     <AssemblyName>ASO_RTR.Desktop</AssemblyName>
+    <Version>1.1.0</Version>
     <ApplicationTitle>ASO RTR</ApplicationTitle>
     <Product>ASO RTR</Product>
     <Company>ASO RTR</Company>
